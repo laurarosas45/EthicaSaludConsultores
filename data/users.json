@@ -1,0 +1,30 @@
+[
+  {
+    "id": "TupZav66G--PkrCJtgrBx",
+    "username": "admin",
+    "passHash": "$2b$10$dBOWSD5TfIOMnFsBaSjvRO.a71VOv6h5Oq.gPpjXBWijqrucpXM/y",
+    "role": "admin",
+    "createdAt": "2025-10-03T17:58:28.118Z"
+  },
+  {
+    "id": "LaMzHU3oHCEPJUp7ni_a2",
+    "username": "valentina.suarez",
+    "passHash": "$2b$10$bkoX0iljxptBogUu4TqBBeZmTJeGjC5MQmYVPuJMHtRxw2aJVAlU6",
+    "role": "admin",
+    "createdAt": "2025-10-10T19:20:01.914Z"
+  },
+  {
+    "id": "PH55kSNPMRezcL0v2SJnN",
+    "username": "sebastian.ruiz",
+    "passHash": "$2b$10$VPLrG3QbB7Xb0qrHymtkwOH3ZaHsIqc6xamoVYB60CnMYEhoQgPm2",
+    "role": "admin",
+    "createdAt": "2025-10-10T19:20:02.007Z"
+  },
+  {
+    "id": "lUiLmDtDCXBda3WVnMTIK",
+    "username": "sebastian",
+    "passHash": "$2b$10$nB6Od5WKkXdFVCs5xuqgQeyASFZVxHA7ZRSyW.Yj8jP0xNAcGzkce",
+    "role": "admin",
+    "createdAt": "2025-10-10T19:20:02.100Z"
+  }
+]

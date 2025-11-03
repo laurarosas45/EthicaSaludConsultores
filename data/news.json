@@ -1,0 +1,90 @@
+[
+  {
+    "id": "co1",
+    "title": "Resolución 3100 de 2019: estándares de habilitación para IPS",
+    "summary": "Puntos clave de los estándares y verificación para habilitación de servicios de salud en Colombia.",
+    "tag": "normatividad",
+    "url": "https://www.minsalud.gov.co/",
+    "source_name": "Ministerio de Salud y Protección Social",
+    "source_url": "https://www.minsalud.gov.co/",
+    "cover_image": "https://picsum.photos/seed/col3100/800/500",
+    "published_at": "2025-08-15T10:00:00.000Z"
+  },
+  {
+    "id": "co2",
+    "title": "Checklist de habilitación para IPS: errores frecuentes",
+    "summary": "Hallazgos comunes en visitas y cómo prepararse para la verificación de condiciones mínimas.",
+    "tag": "habilitacion",
+    "url": "https://www.supersalud.gov.co/",
+    "source_name": "Superintendencia Nacional de Salud",
+    "source_url": "https://www.supersalud.gov.co/",
+    "cover_image": "https://picsum.photos/seed/co-hab/800/500",
+    "published_at": "2025-08-05T09:00:00.000Z"
+  },
+  {
+    "id": "co3",
+    "title": "Auditoría interna en IPS: guía práctica basada en riesgos",
+    "summary": "Plan de auditoría, muestreo, evidencias, análisis de hallazgos y planes de mejora.",
+    "tag": "auditorias",
+    "url": "https://www.supersalud.gov.co/",
+    "source_name": "Superintendencia Nacional de Salud",
+    "source_url": "https://www.supersalud.gov.co/",
+    "cover_image": "https://picsum.photos/seed/co-audit/800/500",
+    "published_at": "2025-07-29T13:00:00.000Z"
+  },
+  {
+    "id": "co4",
+    "title": "Seguridad del paciente: reporte y análisis de eventos",
+    "summary": "Lineamientos del SOGC para cultura de seguridad, reporte y aprendizaje organizacional.",
+    "tag": "seguridad-paciente",
+    "url": "https://www.minsalud.gov.co/",
+    "source_name": "Ministerio de Salud y Protección Social",
+    "source_url": "https://www.minsalud.gov.co/",
+    "cover_image": "https://picsum.photos/seed/co-safe/800/500",
+    "published_at": "2025-07-20T08:00:00.000Z"
+  },
+  {
+    "id": "co5",
+    "title": "Historia clínica: lineamientos y gestión del expediente",
+    "summary": "Buenas prácticas para integridad, disponibilidad y confidencialidad del expediente clínico.",
+    "tag": "guias-oficiales",
+    "url": "https://www.minsalud.gov.co/",
+    "source_name": "Ministerio de Salud y Protección Social",
+    "source_url": "https://www.minsalud.gov.co/",
+    "cover_image": "https://picsum.photos/seed/co-hc/800/500",
+    "published_at": "2025-06-11T16:00:00.000Z"
+  },
+  {
+    "id": "co6",
+    "title": "Farmacovigilancia y tecnovigilancia en Colombia",
+    "summary": "Rol de INVIMA, reporte de eventos e implementación de sistemas de calidad en IPS.",
+    "tag": "seguridad-paciente",
+    "url": "https://www.invima.gov.co/",
+    "source_name": "INVIMA",
+    "source_url": "https://www.invima.gov.co/",
+    "cover_image": "https://picsum.photos/seed/co-invima/800/500",
+    "published_at": "2025-05-22T10:30:00.000Z"
+  },
+  {
+    "id": "co7",
+    "title": "Auditoría con enfoque de riesgo para EPS e IPS",
+    "summary": "Priorización de procesos críticos, mapas de riesgo y seguimiento de planes de mejora.",
+    "tag": "auditorias",
+    "url": "https://www.supersalud.gov.co/",
+    "source_name": "Superintendencia Nacional de Salud",
+    "source_url": "https://www.supersalud.gov.co/",
+    "cover_image": "https://picsum.photos/seed/co-risk/800/500",
+    "published_at": "2025-04-10T12:00:00.000Z"
+  },
+  {
+    "id": "co8",
+    "title": "Decreto 780 de 2016: compilatorio del sector salud",
+    "summary": "Aspectos esenciales del DUR de Salud y Protección Social para cumplimiento normativo.",
+    "tag": "normatividad",
+    "url": "https://www.funcionpublica.gov.co/eva/gestornormativo",
+    "source_name": "Gestor Normativo del Estado",
+    "source_url": "https://www.funcionpublica.gov.co/eva/gestornormativo",
+    "cover_image": "https://picsum.photos/seed/co-780/800/500",
+    "published_at": "2025-03-02T14:00:00.000Z"
+  }
+]
