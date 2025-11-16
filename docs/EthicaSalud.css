@@ -2904,7 +2904,7 @@ nav ul li a.active{
 
   /* 1) Bajar un poco el mensaje de bienvenida para separarlo del menú */
   #inicio header{
-    padding-top: clamp(210px, 36vh, 330px);  /* más espacio bajo el menú */
+    padding-top: clamp(100px, 16vh, 200px);  /* más espacio bajo el menú */
   }
 
   /* 2) Centrar el botón del juego en móviles */
@@ -2932,15 +2932,15 @@ nav ul li a.active{
   #quienes,
   #noticias,
   #contacto {
-    padding-top: 200px !important;   /* separa el contenido del menú */
-    scroll-margin-top: 160px !important;
+    padding-top: 100px !important;   /* separa el contenido del menú */
+    scroll-margin-top: 110px !important;
   }
 
   /* Corrección específica para "LO QUE HACEMOS" */
   #servicios h2,
   #servicios .texto-verde,
   #servicios .subtitulo-servicios {
-    margin-top: 20px !important;
+    margin-top: 10px !important;
   }
 }
 
