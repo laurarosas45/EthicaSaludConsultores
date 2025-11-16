@@ -2904,7 +2904,7 @@ nav ul li a.active{
 
   /* 1) Bajar un poco el mensaje de bienvenida para separarlo del menú */
   #inicio header{
-    padding-top: clamp(230px, 40vh, 340px);  /* más espacio bajo el menú */
+    padding-top: clamp(210px, 36vh, 330px);  /* más espacio bajo el menú */
   }
 
   /* 2) Centrar el botón del juego en móviles */
@@ -2919,33 +2919,28 @@ nav ul li a.active{
   }
 }
 
-/* ===== EVITAR QUE EL MENÚ SE MONTE EN LOS TÍTULOS (solo móvil) ===== */
+/* ===== MENU SOBRE LA IMAGEN EN TODAS LAS SECCIONES (MÓVIL) ===== */
 @media (max-width: 640px){
 
-  /* Todas las secciones importantes se bajan un poco */
-  section[id],
-  .seccion,
-  .bloque,
-  #servicios,
-  #quienes,
-  #contacto,
-  #noticias {
-    scroll-margin-top: 120px;   /* para los clicks de menú */
-    padding-top: 140px !important;  /* Ajuste visual real */
+  header[role="banner"]{
+    background: transparent !important;
+    backdrop-filter: blur(12px);
   }
 
-  /* Ajuste específico para la cabecera de Servicios */
-  #servicios .header-servicios,
-  #servicios .titulo-servicios,
-  #servicios h1 {
-    margin-top: 40px !important;
+  /* --- Cada sección debe empezar MÁS ABAJO para que el menú no la tape --- */
+  #servicios,
+  #quienes,
+  #noticias,
+  #contacto {
+    padding-top: 200px !important;   /* separa el contenido del menú */
+    scroll-margin-top: 160px !important;
   }
-}
-/* ===== Bajar "LO QUE HACEMOS" para que no se monte con el menú ===== */
-#servicios h2,
-#servicios .subtitulo-servicios,
-#servicios .texto-verde {
-  margin-top: 32px !important;   /* puedes subir a 40px si aún lo ves pegado */
-  display: block;
+
+  /* Corrección específica para "LO QUE HACEMOS" */
+  #servicios h2,
+  #servicios .texto-verde,
+  #servicios .subtitulo-servicios {
+    margin-top: 20px !important;
+  }
 }
 
