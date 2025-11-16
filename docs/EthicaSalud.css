@@ -2904,7 +2904,7 @@ nav ul li a.active{
 
   /* 1) Bajar un poco el mensaje de bienvenida para separarlo del menú */
   #inicio header{
-    padding-top: clamp(220px, 36vh, 320px);  /* más espacio bajo el menú */
+    padding-top: clamp(230px, 40vh, 340px);  /* más espacio bajo el menú */
   }
 
   /* 2) Centrar el botón del juego en móviles */
