@@ -423,10 +423,13 @@ const attrApi = noticiasSection?.dataset?.api;
 const isFileProto = location.protocol === "file:";
 const isLocalHost = ["localhost", "127.0.0.1"].includes(location.hostname);
 
-// ⚠️ AQUÍ EL CAMBIO IMPORTANTE: en producción usamos MISMO DOMINIO ("")
+// En local usamos http://localhost:3000, en producción mismo dominio ("")
 const API_BASE =
   attrApi ||
   (isFileProto || isLocalHost ? "http://localhost:3000" : "");
+
+// Vamos a probar 2 rutas posibles: /api/news y /news
+const NEWS_ENDPOINTS = ["/api/news", "/news"];
 
 const stateNews = {
   query: "",
@@ -437,6 +440,7 @@ const stateNews = {
   hasMore: true,
   isLoading: false,
 };
+
 const els = {
   grid: document.getElementById("newsGrid"),
   search: document.getElementById("newsSearch"),
@@ -446,24 +450,30 @@ const els = {
   tplCard: document.getElementById("newsCardTpl"),
   tplSkeleton: document.getElementById("newsSkeletonTpl"),
 };
+
 const safeEl = (k) => {
-  if (!els[k]) console.warn(`[Noticias] Falta ${k}`);
+  if (!els[k]) console.warn(`[Noticias] Falta ${k} en el HTML`);
   return !!els[k];
 };
+
 const formatDate = (iso) =>
   new Date(iso).toLocaleDateString("es-MX", {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
+
 function renderSkeletons(n = 6) {
   if (!safeEl("tplSkeleton") || !safeEl("grid")) return;
   const f = document.createDocumentFragment();
-  for (let i = 0; i < n; i++)
+  for (let i = 0; i < n; i++) {
     f.appendChild(els.tplSkeleton.content.cloneNode(true));
+  }
   els.grid.appendChild(f);
 }
+
 const clearGrid = () => safeEl("grid") && (els.grid.innerHTML = "");
+
 const safeHost = (u) => {
   try {
     return new URL(u).hostname.replace(/^www\./, "");
@@ -471,6 +481,7 @@ const safeHost = (u) => {
     return "fuente";
   }
 };
+
 const mapTagToLabel = (tag) =>
   (
     {
@@ -483,9 +494,51 @@ const mapTagToLabel = (tag) =>
     }[tag] ?? "General"
   );
 
+/**
+ * Intenta llamar a /api/news y, si da 404, prueba /news.
+ * Si algo falla, lanza error.
+ */
+async function fetchNewsData(queryString) {
+  let lastError = null;
+
+  for (const endpoint of NEWS_ENDPOINTS) {
+    const url = `${API_BASE}${endpoint}?${queryString}`;
+    try {
+      console.log("[Noticias] Fetch:", url);
+      const res = await fetch(url, {
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log("[Noticias] OK desde", endpoint, data);
+        return data;
+      }
+
+      // Si es 404 probamos con el siguiente endpoint
+      if (res.status === 404) {
+        console.warn("[Noticias] 404 en", endpoint);
+        lastError = new Error(`404 en ${endpoint}`);
+        continue;
+      }
+
+      // Otros errores los guardamos y no intentamos más
+      lastError = new Error(`HTTP ${res.status} en ${endpoint}`);
+      console.error("[Noticias] Error HTTP:", res.status, "en", endpoint);
+      break;
+    } catch (err) {
+      console.warn("[Noticias] Error de red en", endpoint, err);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error("No se pudo contactar el API de noticias");
+}
+
 function renderNews(items, append = false) {
   if (!safeEl("tplCard") || !safeEl("grid")) return;
   if (!append) clearGrid();
+
   const frag = document.createDocumentFragment();
   const io = new IntersectionObserver(
     (entries, ob) =>
@@ -498,6 +551,7 @@ function renderNews(items, append = false) {
       }),
     { rootMargin: "100px" }
   );
+
   for (const it of items) {
     const node = els.tplCard.content.cloneNode(true);
     const link = node.querySelector(".cover-link");
@@ -507,6 +561,7 @@ function renderNews(items, append = false) {
     const badge = node.querySelector(".badge");
     const date = node.querySelector(".date");
     const sourceLink = node.querySelector(".source-link");
+
     link.href = it.url;
     title.href = it.url;
     title.textContent = it.title || "Sin título";
@@ -515,18 +570,25 @@ function renderNews(items, append = false) {
     date.textContent = it.published_at ? formatDate(it.published_at) : "";
     sourceLink.href = it.source_url ?? it.url;
     sourceLink.textContent = it.source_name ?? safeHost(it.url);
+
     img.alt = it.title || "Noticia";
     img.dataset.src =
       it.cover_image || "https://picsum.photos/seed/ethica/800/500";
     io.observe(img);
+
     frag.appendChild(node);
   }
+
   els.grid.appendChild(frag);
 }
 
+/**
+ * Carga primera página de noticias o recarga filtros.
+ */
 async function fetchNews({ reset = false } = {}) {
   if (stateNews.isLoading) return;
   stateNews.isLoading = true;
+
   if (reset) {
     stateNews.page = 1;
     stateNews.hasMore = true;
@@ -534,6 +596,7 @@ async function fetchNews({ reset = false } = {}) {
     renderSkeletons();
     safeEl("loadMore") && (els.loadMore.hidden = true);
   }
+
   try {
     const params = new URLSearchParams({
       q: stateNews.query,
@@ -542,16 +605,14 @@ async function fetchNews({ reset = false } = {}) {
       page: String(stateNews.page),
       pageSize: String(stateNews.pageSize),
     });
-    const res = await fetch(
-      `${API_BASE}/api/news?${params.toString()}`,
-      { headers: { Accept: "application/json" } }
-    );
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+
+    const data = await fetchNewsData(params.toString());
     clearGrid();
     renderNews(data.items || [], false);
+
     stateNews.hasMore = !!data.hasMore;
     safeEl("loadMore") && (els.loadMore.hidden = !stateNews.hasMore);
+
     if ((data.items || []).length === 0) {
       const d = document.createElement("div");
       d.style.opacity = ".9";
@@ -559,7 +620,7 @@ async function fetchNews({ reset = false } = {}) {
       els.grid.appendChild(d);
     }
   } catch (err) {
-    console.error("[Noticias] Error:", err);
+    console.error("[Noticias] Error final:", err);
     clearGrid();
     if (safeEl("grid")) {
       const d = document.createElement("div");
@@ -573,14 +634,20 @@ async function fetchNews({ reset = false } = {}) {
   }
 }
 
+/**
+ * Carga más resultados (paginación).
+ */
 async function loadMore() {
   if (!stateNews.hasMore || stateNews.isLoading) return;
   stateNews.isLoading = true;
+
   safeEl("loadMore") &&
     ((els.loadMore.disabled = true),
     (els.loadMore.textContent = "Cargando..."));
+
   try {
     stateNews.page += 1;
+
     const params = new URLSearchParams({
       q: stateNews.query,
       tag: stateNews.tag,
@@ -588,12 +655,10 @@ async function loadMore() {
       page: String(stateNews.page),
       pageSize: String(stateNews.pageSize),
     });
-    const res = await fetch(
-      `${API_BASE}/api/news?${params.toString()}`
-    );
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+
+    const data = await fetchNewsData(params.toString());
     renderNews(data.items || [], true);
+
     stateNews.hasMore = !!data.hasMore;
     safeEl("loadMore") && (els.loadMore.hidden = !stateNews.hasMore);
   } catch (e) {
@@ -613,6 +678,7 @@ const debounce = (fn, wait = 350) => {
     t = setTimeout(() => fn(...a), wait);
   };
 };
+
 function setupNewsEvents() {
   safeEl("search") &&
     els.search.addEventListener(
@@ -622,6 +688,7 @@ function setupNewsEvents() {
         fetchNews({ reset: true });
       }, 380)
     );
+
   safeEl("chips") &&
     els.chips.addEventListener("click", (e) => {
       const btn = e.target.closest(".chip");
@@ -633,18 +700,22 @@ function setupNewsEvents() {
       stateNews.tag = btn.dataset.tag ?? "";
       fetchNews({ reset: true });
     });
+
   safeEl("sort") &&
     els.sort.addEventListener("change", () => {
       stateNews.sort = els.sort.value;
       fetchNews({ reset: true });
     });
+
   safeEl("loadMore") &&
     els.loadMore.addEventListener("click", loadMore);
 }
+
 document.addEventListener("DOMContentLoaded", () => {
   setupNewsEvents();
   fetchNews({ reset: true });
 });
+
 
 /* ========= Chat mini ========= */
 const CHAT_API_BASE =
