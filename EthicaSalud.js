@@ -22,7 +22,7 @@
   const contOpciones = document.querySelector(".opciones");
   const numActual    = document.getElementById("num-actual");
   const puntajeEl    = document.getElementById("puntaje");
-  const listaExp     = document.getElementById("lista-explicaciones");
+  let   listaExp     = document.getElementById("lista-explicaciones");
   const temporizadorEl = document.getElementById("temporizador");
 
   let preguntas = [], indice = 0, puntaje = 0, respuestasDetalladas = [];
@@ -104,21 +104,77 @@
     const q = preguntas[indice];
     contOpciones?.querySelectorAll(".opcion").forEach(b => (b.disabled = true, b.classList.remove("seleccionada")));
     btn.classList.add("seleccionada");
-    if (clave === q.correct) { btn.classList.add("correcta"); puntaje += 1; respuestasDetalladas.push({ ...q, elegida: clave, acierto: true }); }
+    const registro = { ...q, elegida: clave, acierto: clave === q.correct };
+    if (registro.acierto) { btn.classList.add("correcta"); puntaje += 1; }
     else {
       btn.classList.add("incorrecta");
       contOpciones?.querySelector(`.opcion[data-opcion="${q.correct}"]`)?.classList.add("correcta");
-      respuestasDetalladas.push({ ...q, elegida: clave, acierto: false });
     }
+    respuestasDetalladas.push(registro);
     if (btnSiguiente) btnSiguiente.disabled = false;
     if (timerId) clearInterval(timerId), timerId = null;
+  }
+
+  // Crea el panel de explicaciones si no existe y devuelve la UL
+  function ensureExplanationPanel() {
+    if (!pantallaResultado) return null;
+
+    // ¿ya existe?
+    let details = pantallaResultado.querySelector('details.details-exp');
+    if (!details) {
+      details = document.createElement('details');
+      details.className = 'details-exp';
+      details.open = true;
+
+      const sum = document.createElement('summary');
+      sum.textContent = 'Explicaciones y respuestas';
+      details.appendChild(sum);
+
+      const ul = document.createElement('ul');
+      ul.id = 'lista-explicaciones';
+      ul.className = 'lista-explicaciones';
+      ul.style.marginTop = '8px';
+      details.appendChild(ul);
+
+      pantallaResultado.appendChild(details);
+    }
+
+    // ¿y la UL?
+    listaExp = details.querySelector('#lista-explicaciones');
+    if (!listaExp) {
+      listaExp = document.createElement('ul');
+      listaExp.id = 'lista-explicaciones';
+      details.appendChild(listaExp);
+    }
+    return listaExp;
   }
 
   function mostrarResultado() {
     mostrarVista(pantallaResultado);
     puntajeEl && (puntajeEl.textContent = String(puntaje));
-    listaExp && (listaExp.innerHTML = "");
-    document.querySelector('#pantalla-resultado details.details-exp')?.setAttribute('open','');
+
+    const ul = ensureExplanationPanel();
+    if (ul) {
+      ul.innerHTML = "";
+      respuestasDetalladas.forEach((r, i) => {
+        const li = document.createElement('li');
+        li.style.margin = '8px 0';
+        const correctaTxt = r.options?.[r.correct] ?? r.correct;
+        const elegidaTxt  = r.options?.[r.elegida] ?? r.elegida;
+
+        li.innerHTML = `
+          <div><strong>Pregunta ${i+1}:</strong> ${r.question}</div>
+          <div><strong>Tu respuesta:</strong> ${elegidaTxt ?? '—'} ${r.acierto ? '✅' : '❌'}</div>
+          <div><strong>Correcta:</strong> ${correctaTxt}</div>
+          <div><em>${r.explanation || 'Sin explicación.'}</em></div>
+        `;
+        ul.appendChild(li);
+      });
+
+      // mantener abierto el panel
+      const details = ul.closest('details.details-exp');
+      if (details) details.setAttribute('open','');
+    }
   }
 
   async function iniciar() { puntaje=0; indice=0; respuestasDetalladas=[]; preguntas = barajar(await obtenerPreguntas()).slice(0,5); renderPregunta(); }
@@ -146,6 +202,13 @@ function setupRevealOnScroll(){
   document.querySelectorAll('[data-split="chars"]').forEach((el) => { splitIntoChars(el); observer.observe(el); });
   document.querySelectorAll('[data-reveal="down"]').forEach((el) => { observer.observe(el); });
 }
+// ✅ Corrección 1: invocar el reveal al cargar el DOM
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupRevealOnScroll);
+} else {
+  setupRevealOnScroll();
+}
 
 /* ===== WhatsApp — normalizador global ===== */
 (() => {
@@ -153,42 +216,29 @@ function setupRevealOnScroll(){
   const WA_NUMBER_E164 = "573054422385";
   const DEFAULT_MSG = "Hola EthicaSalud, me gustaría asesoría";
 
-  // Construye la URL de WhatsApp con mensaje
   function buildWaUrl(message = DEFAULT_MSG) {
     return `https://wa.me/${WA_NUMBER_E164}?text=${encodeURIComponent(message)}`;
   }
 
-  // Normaliza un <a> para que siempre apunte al número oficial
   function normalizeWaLink(a) {
     if (!a) return;
-
-    // Permite personalizar el texto con data-wa-text="..."
     const custom = a.getAttribute("data-wa-text");
     let msg = custom && custom.trim() ? custom.trim() : DEFAULT_MSG;
-
-    // Si el <a> ya trae ?text=..., úsalo como fallback
     try {
       const url = new URL(a.href, location.origin);
       const qText = url.searchParams.get("text");
       if (qText && !custom) msg = qText;
-    } catch {
-      /* href relativo o inválido: ignoramos */
-    }
-
-    // Fuerza el href correcto al número oficial
+    } catch {}
     a.href = buildWaUrl(msg);
     a.target = "_blank";
-    // Asegura seguridad en nueva pestaña
     const rel = (a.getAttribute("rel") || "").split(/\s+/);
     if (!rel.includes("noopener")) rel.push("noopener");
     if (!rel.includes("noreferrer")) rel.push("noreferrer");
     a.setAttribute("rel", rel.join(" ").trim());
-    // Accesibilidad
     if (!a.getAttribute("aria-label")) a.setAttribute("aria-label", "Abrir WhatsApp");
     if (!a.getAttribute("title")) a.setAttribute("title", "WhatsApp");
   }
 
-  // Busca y corrige todos los enlaces relevantes
   function retargetAllWaLinks(root = document) {
     const selector = [
       'a[href*="wa.me"]',
@@ -199,11 +249,9 @@ function setupRevealOnScroll(){
     root.querySelectorAll(selector).forEach(normalizeWaLink);
   }
 
-  // Click delegado: si agregas data-wa o data-wa-text sin href, también funciona
   document.addEventListener("click", (e) => {
     const a = e.target.closest('a[data-wa], a[data-wa-text]');
     if (!a) return;
-    // Si no hay href aún, constrúyelo en el momento
     if (!a.getAttribute("href")) {
       const msg = (a.getAttribute("data-wa-text") || DEFAULT_MSG).trim();
       a.setAttribute("href", buildWaUrl(msg));
@@ -212,12 +260,10 @@ function setupRevealOnScroll(){
     }
   }, { capture: true });
 
-  // Observa cambios del DOM (útil si renderizas secciones dinámicas/Spa)
   const mo = new MutationObserver((mutations) => {
     for (const m of mutations) {
       m.addedNodes.forEach((node) => {
         if (node.nodeType !== 1) return;
-        // Si es un <a> o contiene <a>, corrige
         if (node.matches?.("a")) normalizeWaLink(node);
         retargetAllWaLinks(node);
       });
@@ -229,13 +275,11 @@ function setupRevealOnScroll(){
     mo.observe(document.body, { childList: true, subtree: true });
   });
 
-  // API pequeña por si necesitas abrir WhatsApp desde JS:
   window.WA = {
     url: buildWaUrl,
     open(message) { window.open(buildWaUrl(message), "_blank", "noopener"); }
   };
 })();
-
 
 /* ============ Noticias (frontend) ============ */
 const noticiasSection = document.getElementById("noticias");
@@ -355,10 +399,18 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
     const has=(...w)=>w.some(s=>msg.includes(s));
     if (has("servicio","servicios","ofrecen","hacen")) return `<b>Servicios:</b><ul>${COMPANY.services.map(s=>`<li>${s}</li>`).join("")}</ul>`;
     if (has("fecha","agenda","agendar","disponible","cita","disponibilidad")){
-      const lines = COMPANY.availability.map(d=>{ const f=new Date(d.date).toLocaleDateString("es-CO",{weekday:"short",day:"2-digit",month:"short"}); return `<li><b>${f}:</b> ${d.slots.join(" · ")}</li>`; }).join("");
+      const lines = COMPANY.availability
+        .map(d => {
+          const f = new Date(d.date).toLocaleDateString(
+            "es-CO",
+            { weekday: "short", day: "2-digit", month: "short" }
+          );
+          return `<li><b>${f}:</b> ${d.slots.join(" · ")}</li>`;
+        })
+        .join("");
       return `Estas son nuestras <b>fechas/horas</b> próximas:<ul>${lines}</ul><small>¿Quieres que reservemos un espacio? Escríbenos por WhatsApp o deja otro mensaje aquí.</small>`;
     }
-    if (has("telefono","whatsapp","contacto","correo","email","cel")) return `<b>Contacto:</b><br>Tel/WhatsApp: ${COMPANY.phones.join(" · ")}<br>Correo: <a href="mailto:${COMPANY.email}">${COMPANY.email}</a>`;
+        if (has("telefono","whatsapp","contacto","correo","email","cel")) return `<b>Contacto:</b><br>Tel/WhatsApp: ${COMPANY.phones.join(" · ")}<br>Correo: <a href="mailto:${COMPANY.email}">${COMPANY.email}</a>`;
     if (has("precio","costo","tarifa","valor")) return `Los <b>costos</b> dependen del alcance del servicio. Cuéntanos tu necesidad y te enviamos una propuesta por correo o WhatsApp.`;
     return `Puedo ayudarte con: <b>servicios</b>, <b>fechas</b>, <b>contacto</b> o <b>costos</b>.`;
   }
@@ -417,14 +469,11 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
   function applyHash(raw){
     const hash = raw || location.hash || '#/inicio';
 
-    // alias corto empleados
     if (hash === '#empleados') {
       setActiveView('ingresar-empleados');
       requestAnimationFrame(()=> document.querySelector('#ingresar-empleados input#username')?.focus());
       return;
     }
-
-    // anclas puras
     if (hash.startsWith('#') && !hash.startsWith('#/')) { scrollToAnchor(hash.slice(1)); return; }
 
     const [root, sub] = hash.replace(/^#\//,'').split('/');
@@ -458,14 +507,12 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
   function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   const nl2br = (s)=> esc(String(s||"")).replace(/\n/g,"<br>");
 
-  // === visor ===
   const isOffice = (name='', type='')=>{
     const ext = name.toLowerCase().split('.').pop();
     return ['doc','docx','xls','xlsx','ppt','pptx'].includes(ext) || /officedocument|msword|excel|powerpoint/i.test(type);
   };
   async function openInViewer({ id, name, type }, cfg, token){
     const API = String(cfg.base).replace(/\/+$/,'');
-    // 1) si hay signed-url, úsala para Google Viewer (ideal para Office)
     if (cfg.signedPattern){
       try{
         const url = cfg.signedPattern.replace(':id', encodeURIComponent(id));
@@ -480,7 +527,6 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
         }
       }catch{}
     }
-    // 2) fallback: blob + iframe (perfecto para PDF/IMG)
     try{
       const dl = cfg.downloadPattern.replace(':id', encodeURIComponent(id));
       const r = await fetch(`${API}${dl}`, { headers:{ Authorization:`Bearer ${token}` } });
@@ -515,20 +561,19 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
       const r = await fetch(`${API}${cfg.deletePattern.replace(':id', encodeURIComponent(id))}`, { method:'DELETE', headers:{ Authorization:`Bearer ${token}` } });
       if(!r.ok){ let msg='No se pudo eliminar.'; try{ msg=(await r.json()).error||msg; }catch{} throw new Error(msg); }
       alert('Archivo eliminado.');
-      cfg.loadFiles(); // refrescar
+      cfg.loadFiles();
     }catch(e){ alert(e.message || 'Error al eliminar.'); }
   }
 
   function buildPortal({ rootSel, userSel, passSel, portalSel, uploadSel, filesSel, logoutSel, storagePrefix }){
     const root = document.querySelector(rootSel); if(!root) return;
 
-    // Endpoints (permiten override por data-*)
     const base = (root.dataset.apiBase || BASE);
     const loginPath     = root.dataset.login     || '/api/auth/login';
     const filesPath     = root.dataset.files     || '/api/files';
     const downloadPath  = root.dataset.download  || '/api/files/:id/download';
     const deletePath    = root.dataset.delete    || '/api/files/:id';
-    const signedPath    = root.dataset.signed    || '/api/files/:id/signed-url'; // opcional
+    const signedPath    = root.dataset.signed    || '/api/files/:id/signed-url';
 
     const cfg = {
       base,
@@ -536,7 +581,7 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
       downloadPattern: downloadPath,
       deletePattern: deletePath,
       signedPattern: signedPath,
-      loadFiles: ()=> loadFiles() // se reasigna luego
+      loadFiles: ()=> loadFiles()
     };
 
     const form   = root.querySelector('.login-form');
@@ -557,7 +602,7 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
     async function login(username, password){
       const r = await fetch(`${String(base).replace(/\/+$/,'')}${loginPath}`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username, password }) });
       if(!r.ok){ let msg='Credenciales inválidas'; try{ msg=(await r.json()).error||msg; }catch{} throw new Error(msg); }
-      return r.json(); // { token, user:{...} }
+      return r.json();
     }
 
     function enterPortal(token, u){ localStorage.setItem(LS_TOKEN, token); localStorage.setItem(LS_USER, JSON.stringify(u)); showPortal(true); loadFiles(); }
@@ -608,7 +653,6 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
         });
         files.appendChild(frag);
 
-        // wire
         files.querySelectorAll('[data-open]').forEach(btn=>{
           btn.addEventListener('click', ()=>{
             const token = localStorage.getItem(LS_TOKEN);
@@ -633,9 +677,8 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
         files.textContent = e.message || 'Error inesperado.';
       }
     }
-    cfg.loadFiles = loadFiles; // para delete refresh
+    cfg.loadFiles = loadFiles;
 
-    // subir
     upload?.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const token = localStorage.getItem(LS_TOKEN);
@@ -652,7 +695,6 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
       }catch(err){ alert(err.message || 'No se pudo subir.'); }
     });
 
-    // login submit
     form?.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const us = user?.value.trim(); const pw = pass?.value.trim();
@@ -663,16 +705,13 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
       finally{ setLoading(false); }
     });
 
-    // logout
     logout?.addEventListener('click', ()=>{
       localStorage.removeItem(LS_TOKEN); localStorage.removeItem(LS_USER); showPortal(false);
     });
 
-    // auto-login si hay token
     (function init(){ const token = localStorage.getItem(LS_TOKEN); if (token){ showPortal(true); loadFiles(); } })();
   }
 
-  // === Montar ambos portales ===
   buildPortal({
     rootSel:'[data-view="ingresar-empleados"]',
     userSel:'#username', passSel:'#password',
@@ -695,27 +734,24 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
     const status = document.getElementById("formStatus");
     if (!form) return;
 
-    // Usa el action del <form> si está definido; si no, /api/contacto
     const CONTACT_PATH = form.getAttribute("action") || "/api/contacto";
 
-    // API local en dev; producción a tu backend real
     const API_BASE =
       (location.protocol === "file:" || ["localhost","127.0.0.1"].includes(location.hostname))
         ? "http://localhost:3000"
-        : "https://ethicasalud-backend.onrender.com"; // <-- ajusta si usas otro backend
+        : "https://ethicasalud-backend.onrender.com";
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (status) status.textContent = "Enviando...";
 
-      // Validaciones mínimas + honeypot
       const fd = new FormData(form);
       const nombre   = (fd.get("nombre")  || "").toString().trim();
       const email    = (fd.get("email")   || "").toString().trim();
       const mensaje  = (fd.get("mensaje") || "").toString().trim();
       const acepta   = form.querySelector('input[name="acepta"]')?.checked;
       const honeypot = (fd.get("website") || "").toString().trim();
-      if (honeypot) return; // anti-spam silencioso
+      if (honeypot) return;
 
       if (!nombre || !email || !mensaje || !acepta) {
         if (status) status.textContent = "Completa nombre, correo, mensaje y acepta la política.";
@@ -740,11 +776,9 @@ const CHAT_API_BASE = (location.protocol === "file:" ? "http://localhost:3000" :
     });
   }
 
-  // Engancha aunque DOMContentLoaded ya haya pasado (una sola vez)
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", setupContactForm);
   } else {
     setupContactForm();
   }
 })();
-
