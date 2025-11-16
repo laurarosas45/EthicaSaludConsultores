@@ -7,18 +7,13 @@ import rateLimit from "express-rate-limit";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Si tu Node < 18, descomenta la siguiente línea:
-// import fetch from "node-fetch";
-
 // ===== Rutas =====
-// Ajusta el import de news si vive en /routes
 import newsRouter from "./news.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import filesRouter from "./routes/files.routes.js";
 import waRouter from "./routes/wa.routes.js";
 import contactRouter from "./routes/contact.routes.js";
 
-// ===== Setup básico =====
 const app = express();
 const PORT = process.env.PORT || 3000;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -28,15 +23,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ===== Middlewares globales =====
-app.set("trust proxy", 1); // si despliegas detrás de proxy (Render, Vercel, Nginx)
+app.set("trust proxy", 1); // Render usa proxy
 app.use(helmet());
 
-// ------------ CORRECCIÓN: parsers de body ------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// -----------------------------------------------------
 
-// ===== CORS whitelist desde .env (CSV)
+// ===== CORS whitelist desde .env (CSV) =====
 const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || "")
   .split(",")
   .map(s => s.trim())
@@ -55,43 +48,67 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// preflight
 
 // Rate limit solo para /api
 app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, max: 300 }));
 
-// Static (descargas públicas)
+// ===== STATIC =====
+
+// Descargas públicas que ya tenías
 app.use("/uploads-public", express.static(path.resolve(__dirname, "uploads")));
 
-// ===== Rutas de negocio =====
+// 💚 NUEVO: servir el FRONTEND desde /docs
+// Todos los archivos de docs/ serán accesibles en el mismo dominio
+app.use(express.static(path.join(__dirname, "docs")));
+
+// ===== Rutas de negocio (API) =====
 app.use("/api/auth", authRouter);
 app.use("/api/files", filesRouter);
 app.use("/api", newsRouter);            // expone /api/news...
 app.use("/api/wa", waRouter);
 app.use("/api/contacto", contactRouter);
-app.use("/api/contact",  contactRouter); // ← alias para evitar 404
-
+app.use("/api/contact",  contactRouter); // alias
 
 // ===== Health =====
 app.get("/api/health", (_req, res) => res.json({ ok: true, ts: Date.now() }));
 
 // ===== QUIZ =====
 const FALLBACK_QUESTIONS = [
-  { id:"col-1", question:"¿Qué entidad en Colombia vigila el cumplimiento de las EPS e IPS?",
+  {
+    id:"col-1",
+    question:"¿Qué entidad en Colombia vigila el cumplimiento de las EPS e IPS?",
     options:{A:"INVIMA",B:"Ministerio de Salud",C:"Superintendencia Nacional de Salud",D:"Secretaría de Gobierno"},
-    correct:"C", explanation:"La Supersalud supervisa y controla a EPS e IPS." },
-  { id:"col-2", question:"¿Cuál es el objetivo de la Resolución 3100 de 2019?",
+    correct:"C",
+    explanation:"La Supersalud supervisa y controla a EPS e IPS."
+  },
+  {
+    id:"col-2",
+    question:"¿Cuál es el objetivo de la Resolución 3100 de 2019?",
     options:{A:"Definir requisitos de habilitación",B:"Regular precios de medicamentos",C:"Controlar importación de dispositivos médicos",D:"Otorgar licencias laborales"},
-    correct:"A", explanation:"Establece estándares para habilitación de servicios." },
-  { id:"col-3", question:"¿Qué autoridad emite las resoluciones de habilitación en salud?",
+    correct:"A",
+    explanation:"Establece estándares para habilitación de servicios."
+  },
+  {
+    id:"col-3",
+    question:"¿Qué autoridad emite las resoluciones de habilitación en salud?",
     options:{A:"Congreso",B:"Ministerio de Salud y Protección Social",C:"INVIMA",D:"Supersalud"},
-    correct:"B", explanation:"El Ministerio de Salud expide estas resoluciones." },
-  { id:"col-4", question:"¿Qué evalúa principalmente la habilitación?",
+    correct:"B",
+    explanation:"El Ministerio de Salud expide estas resoluciones."
+  },
+  {
+    id:"col-4",
+    question:"¿Qué evalúa principalmente la habilitación?",
     options:{A:"Publicidad",B:"Infraestructura, talento humano y procesos",C:"Número de pacientes",D:"Ganancia anual"},
-    correct:"B", explanation:"Asegura condiciones mínimas de calidad y seguridad." },
-  { id:"col-5", question:"¿Cuál es la función del INVIMA?",
+    correct:"B",
+    explanation:"Asegura condiciones mínimas de calidad y seguridad."
+  },
+  {
+    id:"col-5",
+    question:"¿Cuál es la función del INVIMA?",
     options:{A:"Regular EPS",B:"Vigilar calidad de medicamentos y alimentos",C:"Supervisar hospitales",D:"Otorgar licencias laborales"},
-    correct:"B", explanation:"Regula y controla medicamentos, alimentos y dispositivos." }
+    correct:"B",
+    explanation:"Regula y controla medicamentos, alimentos y dispositivos."
+  }
 ];
 
 function buildPrompt(){
@@ -147,12 +164,17 @@ async function generarConIA(){
   }
 }
 
-app.get("/", (_req, res) => res.send("Servidor de EthicaSalud funcionando ✅"));
-
+// Ruta del quiz
 app.get("/api/quiz", async (_req, res) => {
   const ia = await generarConIA();
   if (ia) return res.json(ia);
   return res.json({ questions: FALLBACK_QUESTIONS });
+});
+
+// 💚 NUEVO: fallback para cualquier ruta GET -> index.html
+// (deja esto DESPUÉS de todas las rutas /api y ANTES del 404)
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(__dirname, "docs", "index.html"));
 });
 
 // ===== 404 & error handler =====
