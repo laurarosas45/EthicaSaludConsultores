@@ -32,11 +32,12 @@ app.use(express.urlencoded({ extended: true }));
 // ===== CORS whitelist desde .env =====
 const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || "")
   .split(",")
-  .map(s => s.trim())
+  .map((s) => s.trim())
   .filter(Boolean);
 
 const corsOptions = {
   origin(origin, cb) {
+    // peticiones sin origen (Postman, healthchecks, file://)
     if (!origin || origin === "null") return cb(null, true);
     if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
     return cb(new Error(`CORS bloqueado para: ${origin}`));
@@ -52,28 +53,34 @@ app.use(cors(corsOptions));
 app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, max: 300 }));
 
 // Archivos públicos (uploads)
-app.use("/uploads-public", express.static(path.resolve(__dirname, "uploads")));
+app.use(
+  "/uploads-public",
+  express.static(path.resolve(__dirname, "uploads"))
+);
 
-// ===== Servir FRONTEND =====
-// Hace que /docs/index.html sea la página principal
+// ===== Servir FRONTEND (carpeta docs) =====
+// Aquí vive tu EthicaSalud: index.html, CSS, JS, imágenes, etc.
 app.use(express.static(path.join(__dirname, "docs")));
 
 // ===== Rutas API =====
 app.use("/api/auth", authRouter);
 app.use("/api/files", filesRouter);
-app.use("/api", newsRouter);
+app.use("/api", newsRouter);        // /api/news...
 app.use("/api/wa", waRouter);
 app.use("/api/contacto", contactRouter);
 app.use("/api/contact", contactRouter); // alias
 
 // ===== Health Check =====
-app.get("/api/health", (_req, res) => res.json({ ok: true, ts: Date.now() }));
+app.get("/api/health", (_req, res) =>
+  res.json({ ok: true, ts: Date.now() })
+);
 
 // ===== QUIZ IA =====
 const FALLBACK_QUESTIONS = [
   {
     id: "col-1",
-    question: "¿Qué entidad en Colombia vigila el cumplimiento de las EPS e IPS?",
+    question:
+      "¿Qué entidad en Colombia vigila el cumplimiento de las EPS e IPS?",
     options: {
       A: "INVIMA",
       B: "Ministerio de Salud",
@@ -94,12 +101,18 @@ const FALLBACK_QUESTIONS = [
     },
     correct: "A",
     explanation:
-      "Establece estándares para habilitación de servicios de salud.",
+      "Establece estándares para la habilitación de servicios de salud.",
   },
   {
     id: "col-3",
-    question: "¿Qué autoridad emite las resoluciones de habilitación en salud?",
-    options: { A: "Congreso", B: "Ministerio de Salud y Protección Social", C: "INVIMA", D: "Supersalud" },
+    question:
+      "¿Qué autoridad emite las resoluciones de habilitación en salud?",
+    options: {
+      A: "Congreso",
+      B: "Ministerio de Salud y Protección Social",
+      C: "INVIMA",
+      D: "Supersalud",
+    },
     correct: "B",
     explanation: "El Ministerio de Salud expide estas resoluciones.",
   },
@@ -184,14 +197,10 @@ app.get("/api/quiz", async (_req, res) => {
   return res.json({ questions: FALLBACK_QUESTIONS });
 });
 
-// ===== Fallback: CUALQUIER OTRA RUTA → index.html =====
-// IMPORTANTE: Usar "/*" en vez de "*" (por path-to-regexp)
-app.get("/*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "docs", "index.html"));
-});
-
 // ===== 404 =====
-app.use((req, res) => res.status(404).json({ ok: false, error: "Not Found" }));
+app.use((req, res) =>
+  res.status(404).json({ ok: false, error: "Not Found" })
+);
 
 // ===== Error handler =====
 app.use((err, _req, res, _next) => {
