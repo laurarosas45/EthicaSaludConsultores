@@ -2797,3 +2797,104 @@ nav ul li a.active{
   transform: none !important;
 }
 
+/* ===== HEADER RESPONSIVE ===== */
+@media (max-width: 768px){
+  header[role="banner"]{
+    flex-wrap: wrap;          /* logo arriba, menú abajo */
+    row-gap: 8px;
+    padding: 10px 12px;
+  }
+
+  #logo{
+    flex: 1 1 100%;
+  }
+
+  header[role="banner"] nav{
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+
+  header[role="banner"] nav ul{
+    justify-content: center;
+    flex-wrap: wrap;          /* permite 2 filas si hace falta */
+    gap: 10px;
+  }
+
+  header[role="banner"] nav ul li a{
+    font-size: 1rem;
+    padding: 3px 6px;
+  }
+}
+
+
+/* ===== HERO RESPONSIVE ===== */
+@media (max-width: 768px){
+  #inicio{
+    display: flex;
+    align-items: center;
+  }
+
+  #inicio h1{
+    margin-left: 0;
+    padding-top: 0;
+    font-size: clamp(1.7rem, 5.5vw, 2.2rem);
+    max-width: 16ch;
+  }
+
+  #inicio p{
+    padding-top: 0;
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    max-width: 26ch;
+  }
+
+  #inicio a{
+    margin-top: 1.5rem;
+    flex-basis: auto;
+    width: auto;
+  }
+}
+
+
+/* ===== NOTICIAS RESPONSIVE ===== */
+@media (max-width: 768px){
+  .noticias-wrap{
+    padding: 0 16px;
+  }
+
+  .noticias-header h2,
+  .noticias-header .intro{
+    max-width: 100%;
+  }
+
+  .news-card .summary{
+    overflow: visible;
+    word-wrap: break-word;
+  }
+}
+
+
+/* ===== CONTACTO: BOTONES RESPONSIVE ===== */
+#contacto .contacto-acciones{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+@media (max-width: 640px){
+  #contacto .row.two{
+    grid-template-columns: 1fr;   /* Tema de interés / Ciudad una debajo de la otra */
+  }
+
+  #contacto .contacto-acciones{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #contacto .btn-primary,
+  #contacto .btn-ghost{
+    width: 100%;
+    text-align: center;
+  }
+}
