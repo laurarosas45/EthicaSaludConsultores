@@ -43,8 +43,15 @@ const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || "")
   .filter(Boolean);
 
 const corsOptions = {
-  origin: (origin, cb) => cb(null, true), // permite todos
+  origin(origin, cb) {
+    // Postman/healthchecks o archivo local (file:// -> "null")
+    if (!origin || origin === "null") return cb(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    return cb(new Error(`CORS bloqueado para: ${origin}`));
+  },
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
