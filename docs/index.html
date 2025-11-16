@@ -2,22 +2,78 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EthicaSalud Consultores</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="EthicaSalud.css">
+    <link rel="stylesheet" href="quienes.css">
 
-  <!-- CSS principales -->
-  <link rel="stylesheet" href="EthicaSalud.css">
-  <link rel="stylesheet" href="quienes.css">
-  <link rel="stylesheet" href="juego.css">
 </head>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const header = document.querySelector('header');
+    const hero   = document.querySelector('#inicio');
+  
+    function setHeaderVar(){
+      const h = header.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--header-altura', h + 'px');
+    }
+    setHeaderVar();
+    window.addEventListener('resize', setHeaderVar);
+  
+    if (hero) {
+      const obs = new IntersectionObserver(
+        ([e]) => header.classList.toggle('has-shadow', !e.isIntersecting),
+        { rootMargin: '-80px 0px 0px 0px', threshold: 0.01 }
+      );
+      obs.observe(hero);
+    } else {
+      const onScroll = () => header.classList.toggle('has-shadow', window.scrollY > 40);
+      onScroll(); window.addEventListener('scroll', onScroll);
+    }
+  
+    // Smooth scroll SOLO para #id (no para #/ruta del router)
+    document.querySelectorAll('a[href^="#"]:not([href^="#/"])').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if (!el) return;
+        e.preventDefault();
+        const top = el.getBoundingClientRect().top + window.pageYOffset
+                  - header.getBoundingClientRect().height - 8;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
+    });
+  
+    // Scroll-spy SOLO para #id
+    const links  = Array.from(document.querySelectorAll('nav a[href^="#"]:not([href^="#/"])'));
+    const map    = new Map(links.map(l => [l.getAttribute('href'), l]));
+    const targets = links.map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const l = map.get('#' + entry.target.id);
+        if (!l) return;
+        if (entry.isIntersecting) {
+          links.forEach(x => x.classList.remove('active'));
+          l.classList.add('active');
+        }
+      });
+    }, {
+      rootMargin: `-${header.getBoundingClientRect().height + 16}px 0px -55% 0px`,
+      threshold: 0.1
+    });
+    targets.forEach(t => spy.observe(t));
+  });
+</script>
+
 <body>
-  <header id="siteHeader" role="banner">
+<header id="siteHeader" role="banner" >
     <a href="#/inicio" aria-label="logo" id="logo">
       <img src="logo/EthicaSalud-consultores.jpg" alt="EthicaSalud consultores S.A.S ">
     </a>
-
+    
     <nav aria-label="Navegación principal">
       <ul>
         <li><a href="#/inicio">Inicio</a></li>
@@ -27,568 +83,893 @@
         <li><a href="#contacto">Contacto</a></li>
       </ul>
     </nav>
-  </header>
-
-  <div data-view="inicio">
-    <!-- SECCIÓN HERO CON VIDEO -->
-    <main id="inicio" role="main">
-      <section aria-label="Sección principal con video">
-        <video
-          autoplay
-          muted
-          loop
-          playsinline
-          controls
-          poster="">
-          <source src="videos/dandoselamano.mp4" type="video/mp4">
-        </video>
-
-        <header>
-          <h1>
-            Consultoría en
+</header>
+<div data-view="inicio">
+<!-- SECCIÓN HERO CON VIDEO -->
+<main id="inicio" role="main">
+    <section aria-label="Sección principal con video">
+      <!-- Pega aquí el link de tu video .mp4 en el atributo src del <source> -->
+      <!-- Si tienes una imagen de portada (poster), pon su ruta en poster="" -->
+      <video
+      autoplay
+      muted
+      loop
+      playsinline
+      controls
+      poster="">  <!-- puedes dejarlo vacío o quitar el atributo -->
+      <source src="videos/dandoselamano.mp4" type="video/mp4">
+    </video>
+    
+      <!-- Texto de bienvenida (irá debajo del video si no agregas CSS) -->
+      <header>
+        <h1 >
+            Consultoría en 
             cumplimiento normativo <br>
-            para el sector salud <br>
+            para el sector salud  <br>
           </h1>
-
+          
           <p>
             Verificamos, acompañamos y certificamos el cumplimiento <br>
             de normativas para clínicas, <br>
             laboratorios y centros de salud.
-            <a href="#contacto">Agenda una asesoría</a>
-          </p>
-        </header>
+            <a href="#contacto" >Agenda una asesoría</a>
 
-        <!-- Puntos destacados opcionales -->
-        <ul>
-          <li>Auditorías y diagnósticos</li>
-          <li>Implementación de normativas aplicables</li>
-          <li>Capacitación y documentación</li>
-        </ul>
-      </section>
-    </main>
+          </p>        
+          
+      </header>
 
-    <!-- SECCIÓN MIS SERVICIOS -->
-    <section id="servicios">
-      <h2>Soluciones diversas adaptadas a cada una de tus necesidades</h2>
-      <a href="#/contacto">
-        <span>Agendar una cita</span> <br>
-      </a><br><br><br>
-
-      <h4>NUESTROS SERVICIOS</h4>
-      <div class="cards">
-        <div class="card">
-          <img src="imagen/seccccion2.png" alt="Comercial">
-          <h3>Comercial</h3>
-          <p>Bodegas, centros comerciales, espacios al aire libre</p>
-          <a class="btnsc2" href="#/servicios">Leer más</a>
-        </div>
-
-        <div class="card">
-          <img src="imagen/secccion2.png" alt="Residencial">
-          <h3>Residencial</h3>
-          <p>Barrios, conjuntos de viviendas</p>
-          <a class="btnsc2" href="#/servicios">Leer más</a>
-        </div>
-
-        <div class="card">
-          <img src="imagen/secccccion2.png" alt="Infraestructura">
-          <h3>Ambiental</h3>
-          <p>Carreteras, tuberías, etc.</p>
-          <a class="btnsc2" href="#/servicios">Leer más</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN JUEGO DE CONSULTORIA DE SALUD -->
-    <section id="juego-consultoria" aria-labelledby="juego-titulo">
-      <div class="juego-wrap">
-        <h2 id="juego-titulo">¿Qué tanto sabes de consultoría en salud?</h2>
-        <p class="juego-sub">
-          Responde 5 preguntas sobre normativa, cumplimiento y buenas prácticas en salud.
-        </p>
-
-        <div id="quiz-card" class="quiz-card estado-inicial" role="group" aria-live="polite">
-          <!-- Pantalla inicial -->
-          <div id="pantalla-inicial" class="vista">
-            <button id="btn-iniciar" class="btn-primario" type="button">Iniciar</button>
-          </div>
-
-          <!-- Pantalla de preguntas -->
-          <div id="pantalla-pregunta" class="vista oculto">
-            <div class="quiz-header">
-              <div id="progreso" class="progreso">Pregunta <span id="num-actual">1</span>/5</div>
-              <div id="temporizador" class="temporizador" aria-label="Tiempo restante" title="Tiempo por pregunta">30s</div>
-            </div>
-
-            <h3 id="texto-pregunta" class="texto-pregunta">Pregunta…</h3>
-
-            <div class="opciones" role="list">
-              <!-- Botones de respuesta (se crean por JS) -->
-            </div>
-
-            <div class="acciones">
-              <button id="btn-siguiente" class="btn-secundario" type="button" disabled>Siguiente</button>
-            </div>
-          </div>
-
-          <!-- Pantalla de resultados -->
-          <div id="pantalla-resultado" class="vista oculto" aria-live="polite">
-            <h3>Resultado</h3>
-            <p>Tu puntaje: <strong><span id="puntaje"></span> / 5</strong></p>
-            <div class="acciones">
-              <button id="btn-reintentar" class="btn-primario" type="button">Jugar de nuevo</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN PORQUE ELEGIR ETHICASALUD CONSULTORES -->
-    <section id="porque-elegir"
-      class="seccion-por-que"
-      style="--bg:url('imagen/reunion.jpg')">
-
-      <div class="overlay"></div>
-
-      <div class="contenido">
-        <p class="eyebrow" data-split="chars" data-reveal="down">
-          NUESTRO COMPROMISO
-        </p>
-
-        <h2 class="titulo" data-split="chars" data-reveal="down">
-          ¿Por qué elegir a EthicaSalud Consultores?
-        </h2>
-
-        <p class="subtitulo" data-split="chars" data-reveal="down">
-          Cumplimiento normativo, seguridad del paciente y mejora continua.
-        </p>
-
-        <div class="grid-valores">
-          <article class="valor" data-reveal="down">
-            <h3>Experiencia certificada</h3>
-            <p>Equipo multidisciplinario con trayectoria en auditoría y habilitación.</p>
-          </article>
-
-          <article class="valor" data-reveal="down">
-            <h3>Metodologías claras</h3>
-            <p>Diagnósticos, planes de acción y seguimiento con indicadores.</p>
-          </article>
-
-          <article class="valor" data-reveal="down">
-            <h3>Acompañamiento real</h3>
-            <p>Te guiamos desde la evaluación hasta la implementación.</p>
-          </article>
-
-          <article class="valor" data-reveal="down">
-            <h3>Enfoque en resultados</h3>
-            <p>Reducimos riesgos, elevamos estándares y fortalecemos la confianza.</p>
-          </article>
-        </div>
-
-        <div class="cta-wrap" data-reveal="down">
-          <a href="#contacto" class="btn-primario">Agendar una asesoría</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN NOTICIAS Y ARTÍCULOS -->
-    <section
-      v-pre
-      id="noticias"
-      class="seccion-noticias"
-      aria-labelledby="noticias-titulo"
-      style="padding-top:120px; scroll-margin-top:120px;"
-      data-api="https://ethicasaludconsultores.onrender.com">
-
-      <div class="noticias-wrap">
-        <header class="noticias-header">
-          <p class="eyebrow">ACTUALIDAD REGULATORIA</p>
-          <h2 id="noticias-titulo">Noticias y artículos de consultoría y normas</h2>
-          <p class="intro">
-            Selección curada sobre normatividad sanitaria, auditorías, habilitación y seguridad del paciente.
-          </p>
-        </header>
-
-        <!-- Controles -->
-        <div class="noticias-controles" role="region" aria-label="Filtros y búsqueda">
-          <div class="buscador">
-            <input id="newsSearch" type="search" placeholder="Buscar por palabra clave (ej. NOM, habilitación, auditoría)..." aria-label="Buscar artículos">
-          </div>
-
-          <div class="chips" id="newsChips" role="tablist" aria-label="Temas">
-            <button class="chip is-active" data-tag="" role="tab" aria-selected="true">Todos</button>
-            <button class="chip" data-tag="normatividad" role="tab">Normatividad</button>
-            <button class="chip" data-tag="habilitacion" role="tab">Habilitación</button>
-            <button class="chip" data-tag="auditorias" role="tab">Auditorías</button>
-            <button class="chip" data-tag="seguridad-paciente" role="tab">Seguridad del Paciente</button>
-            <button class="chip" data-tag="guias-oficiales" role="tab">Guías oficiales</button>
-          </div>
-
-          <div class="orden">
-            <label for="newsSort">Ordenar</label>
-            <select id="newsSort" aria-label="Ordenar resultados">
-              <option value="recent">Más recientes</option>
-              <option value="oldest">Más antiguos</option>
-              <option value="az">A → Z</option>
-              <option value="za">Z → A</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Resultados -->
-        <div id="newsGrid" class="news-grid" aria-live="polite"></div>
-
-        <!-- Skeletons -->
-        <template id="newsSkeletonTpl">
-          <article class="news-card skeleton">
-            <div class="cover"></div>
-            <div class="text">
-              <div class="line w70"></div>
-              <div class="line w50"></div>
-              <div class="meta">
-                <span class="badge"></span>
-                <span class="date"></span>
-              </div>
-            </div>
-          </article>
-        </template>
-
-        <!-- Template Card -->
-        <template id="newsCardTpl">
-          <article class="news-card">
-            <a class="cover-link" target="_blank" rel="noopener noreferrer">
-              <img class="cover" alt="">
-            </a>
-            <div class="text">
-              <a class="title" target="_blank" rel="noopener noreferrer"></a>
-              <p class="summary"></p>
-              <div class="meta">
-                <span class="badge"></span>
-                <span class="date"></span>
-              </div>
-              <div class="source">
-                Fuente: <a class="source-link" target="_blank" rel="noopener noreferrer"></a>
-              </div>
-            </div>
-          </article>
-        </template>
-
-        <!-- Paginación -->
-        <div class="paginacion">
-          <button id="loadMoreBtn" class="btn-primario" hidden>Cargar más</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACTO  -->
-    <section id="contacto" class="contacto-seccion" aria-labelledby="contacto-title">
-      <div class="wrap">
-        <div class="contacto-header">
-          <p class="eyebrow">Hablemos</p>
-          <h2 id="contacto-title">¿Listos para cumplir la norma y avanzar?</h2>
-          <p class="intro">
-            Cuéntanos brevemente tu necesidad en Colombia (habilitación, auditoría, seguridad del paciente,
-            normatividad, etc.). Te contactaremos muy pronto.
-          </p>
-        </div>
-
-        <div class="contacto-grid">
-          <!-- Formulario -->
-          <div class="card form-card" role="region" aria-label="Formulario de contacto">
-            <form id="contactForm" method="POST" action="/api/contact" novalidate>
-              <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-
-              <div class="row two">
-                <label class="field">
-                  <span>Nombre y apellido *</span>
-                  <input type="text" name="nombre" autocomplete="name" required placeholder="Tu nombre completo">
-                  <small class="err" aria-live="polite"></small>
-                </label>
-
-                <label class="field">
-                  <span>Empresa / IPS</span>
-                  <input type="text" name="empresa" autocomplete="organization" placeholder="Nombre de la entidad">
-                  <small class="err" aria-live="polite"></small>
-                </label>
-              </div>
-
-              <div class="row two">
-                <label class="field">
-                  <span>Correo electrónico *</span>
-                  <input type="email" name="email" autocomplete="email" required placeholder="tucorreo@email.com">
-                  <small class="err" aria-live="polite"></small>
-                </label>
-
-                <label class="field">
-                  <span>Teléfono / WhatsApp</span>
-                  <input type="tel" name="tel" autocomplete="tel" placeholder="+57 3xx xxx xxxx">
-                  <small class="err" aria-live="polite"></small>
-                </label>
-              </div>
-
-              <div class="row two">
-                <label class="field">
-                  <span>Tema de interés *</span>
-                  <select name="tema" required>
-                    <option value="">Selecciona una opción</option>
-                    <option>Normatividad</option>
-                    <option>Habilitación</option>
-                    <option>Auditorías</option>
-                    <option>Seguridad del Paciente</option>
-                    <option>Otro</option>
-                  </select>
-                  <small class="err" aria-live="polite"></small>
-                </label>
-
-                <label class="field">
-                  <span>Ciudad</span>
-                  <input type="text" name="ciudad" placeholder="Ej. Bogotá D.C.">
-                  <small class="err" aria-live="polite"></small>
-                </label>
-              </div>
-
-              <label class="field">
-                <span>Mensaje *</span>
-                <textarea name="mensaje" rows="5" required placeholder="Cuéntanos brevemente tu caso..."></textarea>
-                <small class="err" aria-live="polite"></small>
-              </label>
-
-              <label class="check">
-                <input type="checkbox" name="acepta" required>
-                <span>Acepto la <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a> y el tratamiento de datos personales.</span>
-              </label>
-              <small class="err err-consent" aria-live="polite"></small>
-
-              <input type="hidden" name="origen" value="Sitio web - sección contacto">
-
-              <button type="submit" class="btn-primary">Enviar mensaje</button>
-
-              <a class="btn-ghost"
-                href="https://wa.me/573054422385?text=Hola%20EthicaSalud%2C%20me%20gustaría%20asesoría"
-                target="_blank" rel="noopener">
-                Escríbenos por WhatsApp
-              </a>
-
-              <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
-            </form>
-          </div>
-
-          <!-- Lateral con datos -->
-          <aside class="card info-card" aria-label="Información de contacto">
-            <h3>También puedes contactarnos</h3>
-            <ul class="list">
-              <li><strong>Correo:</strong> <a href="mailto:consultoria@ethicasaludconsultores.com">consultoria@ethicasaludconsultores.com</a></li>
-              <li><strong>Teléfono:</strong> <a href="tel:+573001234567">+57 300 123 4567</a></li>
-              <li><strong>WhatsApp:</strong>
-                <a href="https://wa.me/573054422385" target="_blank" rel="noopener">
-                  +57 305 442 2385
-                </a>
-              </li>
-              <li><strong>Horario:</strong> Lun–Vie, 8:00–18:00 (GMT-5)</li>
-              <li><strong>Cobertura:</strong> En todo Colombia</li>
-            </ul>
-            <p class="mini">Tiempo de respuesta habitual: &lt;24h hábiles.</p>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== FAB: WhatsApp + Chatbot ===== -->
-    <div class="fab-pill" id="fabPill" aria-label="Acciones rápidas">
-      <!-- WhatsApp -->
-      <a class="fab-btn fab-wa"
-        href="https://wa.me/573054422385?text=Hola%20EthicaSalud,%20quiero%20información%20por%20favor."
-        target="_blank" rel="noopener"
-        aria-label="Abrir WhatsApp"
-        title="WhatsApp">
-
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M20 3.9A10 10 0 0 0 3.8 17.6L3 21l3.5-.9A10 10 0 1 0 20 3.9Zm-8 .9a8.1 8.1 0 0 1 6.8 12.6l-.3.4a8.1 8.1 0 0 1-9.6 2.5l-.5-.2-2.1.5.5-2-.2-.5a8.1 8.1 0 0 1 5.4-11.3ZM9.6 8.5c-.2 0-.3 0-.4.2-.3.3-.9.9-.9 1.8 0 1 .7 2 1 2.4.4.6 1.8 2.9 4.4 3.9 2.2.9 2.7.8 3.2.7.5 0 1.6-.7 1.8-1.4.2-.7.2-1.3.1-1.4 0-.2-.2-.2-.5-.4l-1.5-.7c-.3-.1-.4 0-.6.2l-.7.8c-.1.2-.3.2-.6.1-1.3-.5-2.1-1.1-2.9-2.3-.2-.3 0-.5.1-.6l.3-.3c.2-.3.3-.5.2-.7l-.7-1.7c-.1-.2-.3-.3-.5-.3Z" />
-        </svg>
-      </a>
-
-      <!-- Chatbot (robot) -->
-      <button class="fab-btn fab-bot" id="toggleChat" aria-expanded="false" aria-controls="chatbox" title="Asistente EthicaSalud">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M11 2a1 1 0 1 1 2 0v1.1A7 7 0 0 1 20 10v5a4 4 0 0 1-4 4h-1.2a2.8 2.8 0 0 1-5.6 0H8a4 4 0 0 1-4-4v-5a7 7 0 0 1 7-6.9V2Zm-5 8v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-5a5 5 0 0 0-5-5h-2a5 5 0 0 0-5 5Zm4.5-1.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0Zm7 0a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0ZM9 16a1 1 0 1 1 0-2h6a1 1 0 1 1 0 2H9Z" />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Ventana de Chat -->
-    <section class="chatbox" id="chatbox" aria-hidden="true">
-      <div class="chatbox__header">
-        <div class="chatbox__brand">
-          <strong>ÉthicaSalud · Asistente</strong>
-          <small>Respuestas informativas</small>
-        </div>
-        <button class="chatbox__close" id="closeChat" aria-label="Cerrar chat">×</button>
-      </div>
-
-      <div class="chatbox__body" id="chatBody" role="log" aria-live="polite"></div>
-
-      <!-- Paso 1: Captura de datos -->
-      <form class="chatbox__form" id="leadForm" autocomplete="on" novalidate>
-        <div class="row">
-          <input type="text" id="leadName" name="name" placeholder="Tu nombre" required>
-          <input type="email" id="leadEmail" name="email" placeholder="Tu correo" required>
-          <input type="tel" id="leadPhone" name="phone" placeholder="Tu teléfono" required>
-          <input type="text" id="leadTrap" name="company" class="hp" tabindex="-1" autocomplete="off">
-        </div>
-        <button type="submit" class="chatbox__send">Empezar</button>
-      </form>
-
-      <!-- Paso 2: Chat -->
-      <form class="chatbox__form hidden" id="chatForm" autocomplete="off">
-        <input type="text" id="chatInput" placeholder="Escribe: servicios, fechas, contacto..." aria-label="Mensaje">
-        <button type="submit" class="chatbox__send" aria-label="Enviar">Enviar</button>
-      </form>
-    </section>
-
-    <a class="btn" data-wa data-wa-text="Hola EthicaSalud, necesito una auditoría">Escríbenos</a>
-  </div>
-  <!-- fin de la pagina principal-->
-
-  <!--SUB-PÁGINA: QUIÉNES SOMOS-->
-  <section id="quienes" class="quienes-wrap" data-view="quienes">
-    <!-- HERO -->
-    <div class="quienes-hero" role="img" aria-label="Fondo Quiénes Somos">
-      <div class="quienes-overlay"></div>
-      <div class="quienes-titulos">
-        <p class="eyebrow">Nuestra identidad</p>
-        <h1>Quiénes somos</h1>
-        <p class="intro">
-          Equipo multidisciplinario dedicado al cumplimiento normativo en salud.
-          Somos consultores con experiencia en habilitación, auditoría, seguridad del paciente y gestión de calidad.
-        </p>
-
-        <div class="qb-head"></div>
-
-        <!-- 1) Título + Valores -->
-        <div class="valores">
-          <div class="valores-col">
-            <h3>Valores de la empresa</h3>
-            <ul class="chips">
-              <li>Ética</li>
-              <li>Transparencia</li>
-              <li>Excelencia</li>
-              <li>Servicio</li>
-              <li>Mejora continua</li>
-            </ul>
-          </div>
-          <div class="valores-col">
-            <h3>Valores de nuestros profesionales</h3>
-            <ul class="chips">
-              <li>Rigor técnico</li>
-              <li>Empatía</li>
-              <li>Responsabilidad</li>
-              <li>Disciplina</li>
-              <li>Vocación de servicio</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- 2) Breve párrafo de capacidades -->
-        <article class="capabilities">
-          <p>
-            Nuestras capacidades combinan auditoría clínica y administrativa, habilitación según normativa vigente,
-            gestión de riesgos, seguridad del paciente y formación del talento humano. Este balance técnico–humano
-            se traduce en <strong>implementaciones ágiles</strong>, <strong>documentación trazable</strong> y <strong>resultados medibles</strong> que
-            fortalecen su operación y reputación institucional.
-          </p>
-        </article>
-      </div>
-    </div>
-
-    <!-- Submenú local -->
-    <nav class="quienes-subnav" aria-label="Secciones de Quiénes somos">
+      <!-- Puntos destacados opcionales -->
       <ul>
-        <li><a href="#/quienes/conocenos">Conócenos</a></li>
-        <li><a href="#/quienes/vision">Visión</a></li>
-        <li><a href="#/quienes/mision">Misión</a></li>
+        <li>Auditorías y diagnósticos</li>
+        <li>Implementación de normativas aplicables</li>
+        <li>Capacitación y documentación</li>
       </ul>
-    </nav>
+    </section>
+</main>
+<!-- SECCIÓN MIS SERVICIOS -->
+<section id="servicios">
+<h2>Soluciones diversas adaptadas a cada una de tus necesidades
+</h2>
+<a href="#/contacto">
+      <span>Agendar una cita</span> <br>
+</a><br>
+<br>
+<br>
+<!-- ================= SECCIÓN #3 ================= -->
 
-    <!-- ===================== VISTA: CONÓCENOS ===================== -->
-    <section class="quienes-bloque" data-sub-view="conocenos">
-      <div class="equipo-grid">
-        <!-- Persona 1 -->
-        <article class="persona flip" tabindex="0" aria-label="Tarjeta del equipo, voltear para ver estudios">
-          <div class="card-inner">
-            <div class="card-face card-front">
-              <!-- IMPORTANTE: imagen dentro de /docs/imagen en el repo -->
-              <img src="imagen/Sebastian.jpg" alt="Laura Gómez">
-              <h3>Laura Gómez</h3>
-              <p class="rol">Directora de Proyectos</p>
-              <p class="bio">+10 años en regulación sanitaria y gestión de calidad.</p>
-            </div>
-            <div class="card-face card-back">
-              <h4>Estudios</h4>
-              <ul>
-                <li>Magíster en Calidad en Salud – Univ. Nacional</li>
-                <li>Especialización en Auditoría en Salud</li>
-                <li>Liderazgo en Seguridad del Paciente</li>
-              </ul>
-            </div>
-          </div>
-        </article>
+<h4>NUESTROS SERVICIOS</h4>
+<div class="cards">
 
-        <!-- Persona 2 -->
-        <article class="persona flip" tabindex="0" aria-label="Tarjeta del equipo, voltear para ver estudios">
-          <div class="card-inner">
-            <div class="card-face card-front">
-              <img src="imagen/lanina.png" alt="Carlos Pérez">
-              <h3>Carlos Pérez</h3>
-              <p class="rol">Auditor Líder</p>
-              <p class="bio">Experto en auditorías internas y externas en IPS.</p>
-            </div>
-            <div class="card-face card-back">
-              <h4>Estudios</h4>
-              <ul>
-                <li>Especialista en Gerencia de la Calidad</li>
-                <li>Certificación ISO 9001 &amp; 31000</li>
-                <li>Formador de auditores</li>
-              </ul>
-            </div>
-          </div>
-        </article>
+<div class="card">
+        <img src="imagen/seccccion2.png" alt="Comercial">
+        <h3>Comercial</h3>
+        <p>Bodegas, centros comerciales, espacios al aire libre</p>
+        <a class="btnsc2" href="#/servicios">Leer más</a>
+</div>
+  
+<div class="card">
+        <img src="imagen/secccion2.png" alt="Residencial">
+        <h3>Residencial</h3>
+        <p>Barrios, conjuntos de viviendas</p>
+        <a class="btnsc2" href="#/servicios">Leer más</a>
+</div>
+  
+<div class="card">
+        <img src="imagen/secccccion2.png" alt="Infraestructura">
+        <h3>Ambiental</h3>
+        <p>Carreteras, tuberías, etc.</p>
+        <a class="btnsc2" href="#/servicios">Leer más</a>
+</div>
 
-        <!-- Persona 3 -->
-        <article class="persona flip" tabindex="0" aria-label="Tarjeta del equipo, voltear para ver estudios">
-          <div class="card-inner">
-            <div class="card-face card-front">
-              <img src="imagen/laniña.png" alt="María Rincón">
-              <h3>María Rincón</h3>
-              <p class="rol">Especialista en Habilitación</p>
-              <p class="bio">Implementación de requisitos de la Res. 3100/2019.</p>
-            </div>
-            <div class="card-face card-back">
-              <h4>Estudios</h4>
-              <ul>
-                <li>Especialista en Auditoría en Salud</li>
-                <li>Diplomado en Habilitación de Servicios</li>
-                <li>Gestión documental clínica</li>
-              </ul>
-            </div>
-          </div>
-        </article>
+    </div>
+</section>
+<!-- SECCIÓN JUEGO DE CONSULTORIA DE SALUD -->
+<section id="juego-consultoria" aria-labelledby="juego-titulo">
+  <div class="juego-wrap">
+    <h2 id="juego-titulo">¿Qué tanto sabes de consultoría en salud?</h2>
+    <p class="juego-sub">
+      Responde 5 preguntas sobre normativa, cumplimiento y buenas prácticas en salud.
+    </p>
+
+    <div id="quiz-card" class="quiz-card estado-inicial" role="group" aria-live="polite">
+      <!-- Pantalla inicial -->
+      <div id="pantalla-inicial" class="vista">
+        <button id="btn-iniciar" class="btn-primario" type="button">Iniciar</button>
       </div>
 
-      <!-- 4) Impacto y beneficios -->
-      <section class="impacto">
-        <div class="qb-head">
-          <h2>Impacto y beneficios para su organización</h2>
-          <p>Resultados concretos que verá al trabajar con nuestro equipo.</p>
+      <!-- Pantalla de preguntas -->
+      <div id="pantalla-pregunta" class="vista oculto">
+        <div class="quiz-header">
+          <div id="progreso" class="progreso">Pregunta <span id="num-actual">1</span>/5</div>
+          <div id="temporizador" class="temporizador" aria-label="Tiempo restante" title="Tiempo por pregunta">30s</div>
         </div>
-        <div class="impacto-grid">
-          <article class="imp-card">
-            <h3>Habilitación sin tropiezos</h3>
-            <p>Checklist accionables, evidencias completas y acompañamiento hasta acta final.</p>
+
+        <h3 id="texto-pregunta" class="texto-pregunta">Pregunta…</h3>
+
+        <div class="opciones" role="list">
+          <!-- Botones de respuesta (se crean por JS) -->
+        </div>
+
+        <div class="acciones">
+          <button id="btn-siguiente" class="btn-secundario" type="button" disabled>Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Pantalla de resultados -->
+      <div id="pantalla-resultado" class="vista oculto" aria-live="polite">
+        <h3>Resultado</h3>
+        <p>Tu puntaje: <strong><span id="puntaje"></span> / 5</strong></p>
+        <div class="acciones">
+          <button id="btn-reintentar" class="btn-primario" type="button">Jugar de nuevo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- SECCIÓN PORQUE ELEGIR ETHICASALUD CONSULTORES -->
+<section id="porque-elegir"
+  class="seccion-por-que"
+  style="--bg:url('imagen/reunion.jpg')">
+  <!-- ↑ Cambia la ruta por tu imagen de fondo -->
+
+  <div class="overlay"></div>
+
+  <div class="contenido">
+    <!-- El texto se “parte” en letras vía JS para el efecto -->
+    <p class="eyebrow" data-split="chars" data-reveal="down">
+      NUESTRO COMPROMISO
+    </p>
+
+    <h2 class="titulo" data-split="chars" data-reveal="down">
+      ¿Por qué elegir a EthicaSalud Consultores?
+    </h2>
+
+    <p class="subtitulo" data-split="chars" data-reveal="down">
+      Cumplimiento normativo, seguridad del paciente y mejora continua.
+    </p>
+
+    <div class="grid-valores">
+      <article class="valor" data-reveal="down">
+        <h3>Experiencia certificada</h3>
+        <p>Equipo multidisciplinario con trayectoria en auditoría y habilitación.</p>
+      </article>
+
+      <article class="valor" data-reveal="down">
+        <h3>Metodologías claras</h3>
+        <p>Diagnósticos, planes de acción y seguimiento con indicadores.</p>
+      </article>
+
+      <article class="valor" data-reveal="down">
+        <h3>Acompañamiento real</h3>
+        <p>Te guiamos desde la evaluación hasta la implementación.</p>
+      </article>
+
+      <article class="valor" data-reveal="down">
+        <h3>Enfoque en resultados</h3>
+        <p>Reducimos riesgos, elevamos estándares y fortalecemos la confianza.</p>
+      </article>
+    </div>
+
+    <div class="cta-wrap" data-reveal="down">
+      <a href="#contacto" class="btn-primario">Agendar una asesoría</a>
+    </div>
+  </div>
+</section>
+<!-- SECCIÓN NOTICIAS Y ARTÍCULOS -->
+<section 
+v-pre 
+  id="noticias"
+  class="seccion-noticias"
+  aria-labelledby="noticias-titulo"
+  style="padding-top:120px; scroll-margin-top:120px;"
+  data-api="http://localhost:3000" >
+  <!-- ↑ Ajusta 120px al alto real de tu header si fuera distinto -->
+
+  <div class="noticias-wrap">
+
+    <header class="noticias-header">
+      <p class="eyebrow">ACTUALIDAD REGULATORIA</p>
+      <h2 id="noticias-titulo">Noticias y artículos de consultoría y normas</h2>
+      <p class="intro">
+        Selección curada sobre normatividad sanitaria, auditorías, habilitación y seguridad del paciente.
+      </p>
+    </header>
+
+    <!-- Controles -->
+    <div class="noticias-controles" role="region" aria-label="Filtros y búsqueda">
+      <div class="buscador">
+        <input id="newsSearch" type="search" placeholder="Buscar por palabra clave (ej. NOM, habilitación, auditoría)..." aria-label="Buscar artículos">
+      </div>
+
+      <div class="chips" id="newsChips" role="tablist" aria-label="Temas">
+        <!-- data-tag="" significa “todos” -->
+        <button class="chip is-active" data-tag="" role="tab" aria-selected="true">Todos</button>
+        <button class="chip" data-tag="normatividad" role="tab">Normatividad</button>
+        <button class="chip" data-tag="habilitacion" role="tab">Habilitación</button>
+        <button class="chip" data-tag="auditorias" role="tab">Auditorías</button>
+        <button class="chip" data-tag="seguridad-paciente" role="tab">Seguridad del Paciente</button>
+        <button class="chip" data-tag="guias-oficiales" role="tab">Guías oficiales</button>
+      </div>
+
+      <div class="orden">
+        <label for="newsSort">Ordenar</label>
+        <select id="newsSort" aria-label="Ordenar resultados">
+          <option value="recent">Más recientes</option>
+          <option value="oldest">Más antiguos</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div id="newsGrid" class="news-grid" aria-live="polite">
+      <!-- Cards se insertan por JS -->
+    </div>
+
+    <!-- Skeletons (cargan primero) -->
+    <template id="newsSkeletonTpl">
+      <article class="news-card skeleton">
+        <div class="cover"></div>
+        <div class="text">
+          <div class="line w70"></div>
+          <div class="line w50"></div>
+          <div class="meta">
+            <span class="badge"></span>
+            <span class="date"></span>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <!-- Template Card -->
+    <template id="newsCardTpl">
+      <article class="news-card">
+        <a class="cover-link" target="_blank" rel="noopener noreferrer">
+          <img class="cover" alt="">
+        </a>
+        <div class="text">
+          <a class="title" target="_blank" rel="noopener noreferrer"></a>
+          <p class="summary"></p>
+          <div class="meta">
+            <span class="badge"></span>
+            <span class="date"></span>
+          </div>
+          <div class="source">
+            Fuente: <a class="source-link" target="_blank" rel="noopener noreferrer"></a>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <!-- Paginación -->
+    <div class="paginacion">
+      <button id="loadMoreBtn" class="btn-primario" hidden>Cargar más</button>
+    </div>
+  </div>
+</section>
+<!-- CONTACTO  -->
+<section id="contacto" class="contacto-seccion" aria-labelledby="contacto-title">
+  <div class="wrap">
+    <div class="contacto-header">
+      <p class="eyebrow">Hablemos</p>
+      <h2 id="contacto-title">¿Listos para cumplir la norma y avanzar?</h2>
+      <p class="intro">
+        Cuéntanos brevemente tu necesidad en Colombia (habilitación, auditoría, seguridad del paciente,
+        normatividad, etc.). Te contactaremos muy pronto.
+      </p>
+    </div>
+
+    <div class="contacto-grid">
+      <!-- Formulario -->
+      <div class="card form-card" role="region" aria-label="Formulario de contacto">
+        <!-- Nota: method/action declarados; si JS hace fetch, igual funciona al prevenir submit -->
+        <form id="contactForm" method="POST" action="/api/contact" novalidate>
+          <!-- Anti-spam (honeypot) -->
+          <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <div class="row two">
+            <label class="field">
+              <span>Nombre y apellido *</span>
+              <input type="text" name="nombre" autocomplete="name" required placeholder="Tu nombre completo">
+              <small class="err" aria-live="polite"></small>
+            </label>
+
+            <label class="field">
+              <span>Empresa / IPS</span>
+              <input type="text" name="empresa" autocomplete="organization" placeholder="Nombre de la entidad">
+              <small class="err" aria-live="polite"></small>
+            </label>
+          </div>
+
+          <div class="row two">
+            <label class="field">
+              <span>Correo electrónico *</span>
+              <input type="email" name="email" autocomplete="email" required placeholder="tucorreo@email.com">
+              <small class="err" aria-live="polite"></small>
+            </label>
+
+            <label class="field">
+              <span>Teléfono / WhatsApp</span>
+              <input type="tel" name="tel" autocomplete="tel" placeholder="+57 3xx xxx xxxx">
+              <small class="err" aria-live="polite"></small>
+            </label>
+          </div>
+
+          <div class="row two">
+            <label class="field">
+              <span>Tema de interés *</span>
+              <select name="tema" required>
+                <option value="">Selecciona una opción</option>
+                <option>Normatividad</option>
+                <option>Habilitación</option>
+                <option>Auditorías</option>
+                <option>Seguridad del Paciente</option>
+                <option>Otro</option>
+              </select>
+              <small class="err" aria-live="polite"></small>
+            </label>
+
+            <label class="field">
+              <span>Ciudad</span>
+              <input type="text" name="ciudad" placeholder="Ej. Bogotá D.C.">
+              <small class="err" aria-live="polite"></small>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Mensaje *</span>
+            <textarea name="mensaje" rows="5" required placeholder="Cuéntanos brevemente tu caso..."></textarea>
+            <small class="err" aria-live="polite"></small>
+          </label>
+
+          <label class="check">
+            <input type="checkbox" name="acepta" required>
+            <span>Acepto la <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a> y el tratamiento de datos personales.</span>
+          </label>
+          <small class="err err-consent" aria-live="polite"></small>
+
+          <input type="hidden" name="origen" value="Sitio web - sección contacto">
+
+          <!-- Botón de envío real -->
+          <button type="submit" class="btn-primary">Enviar mensaje</button>
+
+          <!-- Canal alterno -->
+          <a class="btn-ghost"
+             href="https://wa.me/573054422385?text=Hola%20EthicaSalud%2C%20me%20gustaría%20asesoría"
+             target="_blank" rel="noopener">
+            Escríbenos por WhatsApp
+          </a>
+
+          <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <!-- Lateral con datos -->
+      <aside class="card info-card" aria-label="Información de contacto">
+        <h3>También puedes contactarnos</h3>
+        <ul class="list">
+          <li><strong>Correo:</strong> <a href="mailto:consultoria@ethicasaludconsultores.com">consultoria@ethicasaludconsultores.com</a></li>
+          <li><strong>Teléfono:</strong> <a href="tel:+573001234567">+57 300 123 4567</a></li>
+          <li><strong>WhatsApp:</strong>
+            <a href="https://wa.me/573054422385" target="_blank" rel="noopener">
+              +57 305 442 2385
+            </a>
+          </li>
+          <li><strong>Horario:</strong> Lun–Vie, 8:00–18:00 (GMT-5)</li>
+          <li><strong>Cobertura:</strong> En todo Colombia</li>
+        </ul>
+        <p class="mini">Tiempo de respuesta habitual: &lt;24h hábiles.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAB: WhatsApp + Chatbot ===== -->
+<div class="fab-pill" id="fabPill" aria-label="Acciones rápidas">
+  <!-- WhatsApp -->
+  <a class="fab-btn fab-wa"
+     href="https://wa.me/573054422385?text=Hola%20EthicaSalud,%20quiero%20información%20por%20favor."
+     target="_blank" rel="noopener"
+     aria-label="Abrir WhatsApp"
+     title="WhatsApp">
+
+    <!-- Ícono WhatsApp (SVG) -->
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 3.9A10 10 0 0 0 3.8 17.6L3 21l3.5-.9A10 10 0 1 0 20 3.9Zm-8 .9a8.1 8.1 0 0 1 6.8 12.6l-.3.4a8.1 8.1 0 0 1-9.6 2.5l-.5-.2-2.1.5.5-2-.2-.5a8.1 8.1 0 0 1 5.4-11.3ZM9.6 8.5c-.2 0-.3 0-.4.2-.3.3-.9.9-.9 1.8 0 1 .7 2 1 2.4.4.6 1.8 2.9 4.4 3.9 2.2.9 2.7.8 3.2.7.5 0 1.6-.7 1.8-1.4.2-.7.2-1.3.1-1.4 0-.2-.2-.2-.5-.4l-1.5-.7c-.3-.1-.4 0-.6.2l-.7.8c-.1.2-.3.2-.6.1-1.3-.5-2.1-1.1-2.9-2.3-.2-.3 0-.5.1-.6l.3-.3c.2-.3.3-.5.2-.7l-.7-1.7c-.1-.2-.3-.3-.5-.3Z"/>
+    </svg>
+  </a>
+
+  <!-- Chatbot (robot) -->
+  <button class="fab-btn fab-bot" id="toggleChat" aria-expanded="false" aria-controls="chatbox" title="Asistente EthicaSalud">
+    <!-- Ícono robot (SVG) -->
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M11 2a1 1 0 1 1 2 0v1.1A7 7 0 0 1 20 10v5a4 4 0 0 1-4 4h-1.2a2.8 2.8 0 0 1-5.6 0H8a4 4 0 0 1-4-4v-5a7 7 0 0 1 7-6.9V2Zm-5 8v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-5a5 5 0 0 0-5-5h-2a5 5 0 0 0-5 5Zm4.5-1.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0Zm7 0a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0ZM9 16a1 1 0 1 1 0-2h6a1 1 0 1 1 0 2H9Z"/>
+    </svg>
+  </button>
+</div>
+ <!--Ventana de Chat-->
+<section class="chatbox" id="chatbox" aria-hidden="true">
+    <div class="chatbox__header">
+      <div class="chatbox__brand">
+        <strong>ÉthicaSalud · Asistente</strong>
+        <small>Respuestas informativas</small>
+      </div>
+      <button class="chatbox__close" id="closeChat" aria-label="Cerrar chat">×</button>
+    </div>
+  
+    <div class="chatbox__body" id="chatBody" role="log" aria-live="polite"></div>
+  
+    <!-- Paso 1: Captura de datos -->
+    <form class="chatbox__form" id="leadForm" autocomplete="on" novalidate>
+      <div class="row">
+        <input type="text" id="leadName" name="name" placeholder="Tu nombre" required>
+        <input type="email" id="leadEmail" name="email" placeholder="Tu correo" required>
+        <input type="tel" id="leadPhone" name="phone" placeholder="Tu teléfono" required>
+        <input type="text" id="leadTrap" name="company" class="hp" tabindex="-1" autocomplete="off">
+      </div>
+      <button type="submit" class="chatbox__send">Empezar</button>
+    </form>
+  
+    <!-- Paso 2: Chat -->
+    <form class="chatbox__form hidden" id="chatForm" autocomplete="off">
+      <input type="text" id="chatInput" placeholder="Escribe: servicios, fechas, contacto..." aria-label="Mensaje">
+      <button type="submit" class="chatbox__send" aria-label="Enviar">Enviar</button>
+    </form>
+</section>
+
+<a class="btn" data-wa data-wa-text="Hola EthicaSalud, necesito una auditoría">Escríbenos</a>
+
+</div>
+                             <!-- fin de la pagina principal-->
+                              
+<!--SUB-PÁGINA: QUIÉNES SOMOS-->
+<section id="quienes" class="quienes-wrap" data-view="quienes">
+  <!-- HERO -->
+  <div class="quienes-hero" role="img" aria-label="Fondo Quiénes Somos">
+    <div class="quienes-overlay"></div>
+    <div class="quienes-titulos">
+      <p class="eyebrow">Nuestra identidad</p>
+      <h1>Quiénes somos</h1>
+      <p class="intro">Equipo multidisciplinario dedicado al cumplimiento normativo en salud.
+      Somos consultores con experiencia en habilitación, auditoría, seguridad del paciente y gestión de calidad.</p>
+
+      <div class="qb-head">
+      </div>
+  
+      <!-- 1) Título + Valores -->
+      <div class="valores">
+        <div class="valores-col">
+          <h3>Valores de la empresa</h3>
+          <ul class="chips">
+            <li>Ética</li>
+            <li>Transparencia</li>
+            <li>Excelencia</li>
+            <li>Servicio</li>
+            <li>Mejora continua</li>
+          </ul>
+        </div>
+        <div class="valores-col">
+          <h3>Valores de nuestros profesionales</h3>
+          <ul class="chips">
+            <li>Rigor técnico</li>
+            <li>Empatía</li>
+            <li>Responsabilidad</li>
+            <li>Disciplina</li>
+            <li>Vocación de servicio</li>
+          </ul>
+        </div>
+      </div>
+  
+      <!-- 2) Breve párrafo de capacidades -->
+      <article class="capabilities">
+        <p>
+          Nuestras capacidades combinan auditoría clínica y administrativa, habilitación según normativa vigente,
+          gestión de riesgos, seguridad del paciente y formación del talento humano. Este balance técnico–humano
+          se traduce en <strong>implementaciones ágiles</strong>, <strong>documentación trazable</strong> y <strong>resultados medibles</strong> que
+          fortalecen su operación y reputación institucional.
+        </p>
+      </article>
+  
+    </div>
+  </div>
+
+  <!-- Submenú local -->
+  <nav class="quienes-subnav" aria-label="Secciones de Quiénes somos">
+    <ul>
+      <li><a  href="#/quienes/conocenos">Conócenos</a></li>
+      <li><a href="#/quienes/vision">Visión</a></li>
+      <li><a href="#/quienes/mision">Misión</a></li>
+    </ul>
+  </nav>
+
+  <!-- ===================== VISTA: CONÓCENOS ===================== -->
+  <section class="quienes-bloque" data-sub-view="conocenos">
+    <div class="equipo-grid">
+      <!-- Persona 1 -->
+      <article class="persona flip" tabindex="0" aria-label="Tarjeta del equipo, voltear para ver estudios">
+        <div class="card-inner">
+          <div class="card-face card-front">
+            <img src="/Users/laurarosas/Desktop/Sebastian.jpg" alt="Laura Gómez">
+            <h3>Laura Gómez</h3>
+            <p class="rol">Directora de Proyectos</p>
+            <p class="bio">+10 años en regulación sanitaria y gestión de calidad.</p>
+          </div>
+          <div class="card-face card-back">
+            <h4>Estudios</h4>
+            <ul>
+              <li>Magíster en Calidad en Salud – Univ. Nacional</li>
+              <li>Especialización en Auditoría en Salud</li>
+              <li>Liderazgo en Seguridad del Paciente</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- Persona 2 -->
+      <article class="persona flip" tabindex="0" aria-label="Tarjeta del equipo, voltear para ver estudios">
+        <div class="card-inner">
+          <div class="card-face card-front">
+            <img src="imagen/lanina.png" alt="Carlos Pérez">
+            <h3>Carlos Pérez</h3>
+            <p class="rol">Auditor Líder</p>
+            <p class="bio">Experto en auditorías internas y externas en IPS.</p>
+          </div>
+          <div class="card-face card-back">
+            <h4>Estudios</h4>
+            <ul>
+              <li>Especialista en Gerencia de la Calidad</li>
+              <li>Certificación ISO 9001 &amp; 31000</li>
+              <li>Formador de auditores</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- Persona 3 -->
+      <article class="persona flip" tabindex="0" aria-label="Tarjeta del equipo, voltear para ver estudios">
+        <div class="card-inner">
+          <div class="card-face card-front">
+            <img src="imagen/laniña.png" alt="María Rincón">
+            <h3>María Rincón</h3>
+            <p class="rol">Especialista en Habilitación</p>
+            <p class="bio">Implementación de requisitos de la Res. 3100/2019.</p>
+          </div>
+          <div class="card-face card-back">
+            <h4>Estudios</h4>
+            <ul>
+              <li>Especialista en Auditoría en Salud</li>
+              <li>Diplomado en Habilitación de Servicios</li>
+              <li>Gestión documental clínica</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- 4) Impacto y beneficios -->
+    <section class="impacto">
+      <div class="qb-head">
+        <h2>Impacto y beneficios para su organización</h2>
+        <p>Resultados concretos que verá al trabajar con nuestro equipo.</p>
+      </div>
+      <div class="impacto-grid">
+        <article class="imp-card">
+          <h3>Habilitación sin tropiezos</h3>
+          <p>Checklist accionables, evidencias completas y acompañamiento hasta acta final.</p>
+        </article>
+        <article class="imp-card">
+          <h3>Riesgos controlados</h3>
+          <p>Mapas de riesgo clínico y operativo con planes de mitigación medibles.</p>
+        </article>
+        <article class="imp-card">
+          <h3>Documentación viva</h3>
+          <p>Protocolos claros, versiones controladas y capacitación efectiva al personal.</p>
+        </article>
+        <article class="imp-card">
+          <h3>Mejora continua</h3>
+          <p>Indicadores, auditorías periódicas y cultura de seguridad del paciente.</p>
+        </article>
+      </div>
+    </section>
+  </section>
+
+  <!-- ===================== VISTA: VISIÓN ===================== -->
+  <section class="quienes-bloque" data-sub-view="vision">
+    <div class="qb-head">
+      <h2>Visión</h2>
+      <p>Nuestro horizonte estratégico para el sector salud.</p>
+    </div>
+    <article class="texto-largo">
+      <p>
+        Aspiramos a consolidarnos como el aliado más confiable para las instituciones de salud que buscan
+        <strong>excelencia sostenible</strong>. Visualizamos un ecosistema donde la normativa deja de ser una carga y se convierte
+        en palanca de valor: procesos más seguros, pacientes mejor atendidos y organizaciones que aprenden y crecen.
+        Impulsamos prácticas basadas en evidencia, tecnología aplicada y equipos humanos conscientes del impacto de su labor.
+      </p>
+      <p>
+        En los próximos años, extenderemos metodologías replicables, fortaleceremos redes de conocimiento y desarrollaremos
+        herramientas que faciliten la medición y la mejora continua. Todo, con la ética como eje y la transparencia como
+        lenguaje común con nuestros clientes y sus usuarios.
+      </p>
+    </article>
+  </section>
+
+  <!-- ===================== VISTA: MISIÓN ===================== -->
+  <section class="quienes-bloque" data-sub-view="mision">
+    <div class="qb-head">
+      <h2>Misión</h2>
+      <p>Propósito y compromiso cotidiano.</p>
+    </div>
+    <article class="texto-largo">
+      <p>
+        Acompañamos a EPS e IPS en el <strong>cumplimiento normativo</strong> y la <strong>seguridad del paciente</strong> mediante diagnósticos
+        rigurosos, planes de acción realistas y capacitación efectiva. Integramos auditoría, habilitación, gestión del riesgo
+        y calidad para que cada institución alcance estándares superiores, reduzca no conformidades y mejore sus resultados
+        clínicos y administrativos. Nuestro trabajo se refleja en equipos fortalecidos, usuarios seguros y organizaciones
+        que operan con claridad y confianza.
+      </p>
+      <p>
+        Actuamos con ética, respeto y responsabilidad social, construyendo relaciones a largo plazo basadas en evidencia,
+        indicadores y transparencia.
+      </p>
+    </article>
+  </section>
+
+  <!-- CTA común -->
+  <div class="quienes-cta">
+    <a class="btn-primario" href="#/contacto">Agendar una asesoría</a>
+  </div>
+</section>
+
+<!-- SERVICIOS (Vue.js + submenús)-->
+<section id="servicios-inicio" class="servicios-wrap" data-view="servicios">
+      <!-- HERO -->
+      <div class="servicios-hero" role="img" aria-label="Fondo Servicios">
+        <div class="servicios-overlay"></div>
+        <div class="servicios-titulos">
+          <p class="eyebrow">Lo que hacemos</p>
+          <h1>Servicios</h1>
+          <p class="intro">Acompañamiento técnico con enfoque normativo y resultados medibles.</p>
+        </div>
+      </div>
+    
+      <!-- Submenú local (tabs) -->
+      <nav class="servicios-subnav" aria-label="Secciones de Servicios">
+        <ul>
+          <li><a href="#/servicios/ambiental">Ambiental</a></li>
+          <li><a href="#/servicios/calidad">Calidad</a></li>
+        </ul>
+      </nav>
+    
+      <!-- ==================== VISTA: AMBIENTAL ==================== -->
+      <section class="servicio-bloque" data-serv-view="ambiental">
+            
+        <div class="servicio-grid">
+          <article class="serv-card">
+            <h3>Diagnóstico y plan de cumplimiento</h3>
+            <p>Levantamiento de requisitos, brechas y hoja de ruta para licencias, permisos y reportes.</p>
           </article>
-          <article class="imp-card">
-            <h3>Riesgos controlados</h3>
-            <p>Mapas de riesgo clínico y operativo con planes de mitigación medibles.</p>
+          <article class="serv-card">
+            <h3>Residuos y vertimientos</h3>
+            <p>Programas de manejo integral, caracterización, segregación y evidencias para autoridades.</p>
           </article>
-          <article class="imp-card">
+          <article class="serv-card">
+            <h3>Huella e indicadores</h3>
+            <p>Inventarios de emisiones, consumo de agua/energía y tableros de seguimiento.</p>
+          </article>
+          <article class="serv-card">
+            <h3>Formación al equipo</h3>
+            <p>Capacitaciones prácticas con listas de chequeo y formatos trazables.</p>
+          </article>
+        </div>
+    
+        <aside class="servicio-nota">
+          <p><strong>Resultados:</strong> menos sanciones, auditorías fluidas y cultura ambiental activa.</p>
+        </aside>
+      </section>
+    
+      <!-- ===================== VISTA: CALIDAD ===================== -->
+      <section class="servicio-bloque" data-serv-view="calidad">
+    
+        <div class="servicio-grid">
+          <article class="serv-card">
+            <h3>Habilitación y estándares</h3>
+            <p>Implementación de requisitos (p. ej., Res. 3100/2019), evidencias y acompañamiento hasta acta.</p>
+          </article>
+          <article class="serv-card">
+            <h3>Auditoría interna</h3>
+            <p>Programas de auditoría clínica/administrativa, no conformidades y planes de mejora.</p>
+          </article>
+          <article class="serv-card">
+            <h3>Gestión del riesgo</h3>
+            <p>Mapas de riesgo, análisis de causas y barreras para eventos adversos.</p>
+          </article>
+          <article class="serv-card">
             <h3>Documentación viva</h3>
-            <p>Protocolos claros, versiones controladas y capacitación efectiva
+            <p>Procedimientos claros, control de versiones, inducción y reinducción al personal.</p>
+          </article>
+        </div>
+    
+        <aside class="servicio-nota">
+          <p><strong>Resultados:</strong> reducción de no conformidades, trazabilidad y experiencia del paciente segura.</p>
+        </aside>
+      </section>
+    
+      <!-- CTA común -->
+      <div class="servicios-cta">
+        <a class="btn-primario" href="#/contacto">Solicitar asesoría</a>
+      </div>
+</section>
+
+<!-- SUBPÁGINA: INGRESAR EMPLEADOS -->
+<section id="ingresar-empleados" class="login-wrap" data-view="ingresar-empleados">
+  <div class="login-container" id="login-container">
+
+    <!-- Fondo ilustrado -->
+    <div class="login-bg">
+      <div class="sky"></div>
+      <div class="mountains"></div>
+      <div class="moon"></div>
+    </div>
+
+    <!-- Tarjeta de Login -->
+    <div class="login-card">
+      <h2 class="welcome-title">WELCOME</h2>
+
+      <form class="login-form">
+        <div class="form-group">
+          <label for="username" class="visually-hidden">Username</label>
+          <input type="text" id="username" name="username" placeholder="Username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="visually-hidden">Password</label>
+          <input type="password" id="password" name="password" placeholder="Password" required>
+        </div>
+
+        <button type="submit" class="btn-login">LOGIN</button>
+
+        <a href="#" class="forgot-password">Forgot your Password?</a>
+      </form>
+
+      <div class="signup-section">
+        <p>Don’t you have account?</p>
+        <button class="btn-signup">Sign up</button>
+      </div>
+    </div>
+
+  </div>
+  <!-- === Portal de empleados (inicia oculto) === -->
+<div id="emp-portal" class="is-hidden" aria-hidden="true" style="max-width:980px;width:100%;margin:28px auto;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h3 style="margin:0;color:#fff;">Área de empleados</h3>
+    <button id="emp-logout" class="btn-signup" type="button" title="Cerrar sesión">Cerrar sesión</button>
+  </div>
+
+  <!-- Subir archivo -->
+  <form id="emp-upload" enctype="multipart/form-data" style="background:rgba(255,255,255,.12);backdrop-filter:blur(10px);padding:16px;border-radius:16px;display:grid;gap:10px">
+    <div><input id="emp-file" name="file" type="file" required></div>
+
+    <div style="display:grid;gap:6px;grid-template-columns: repeat(3, minmax(0,1fr));align-items:center">
+      <label style="grid-column:1;">Visibilidad</label>
+      <select id="emp-visibility" name="visibility" style="grid-column:2/4">
+        <option value="company">Toda la empresa</option>
+        <option value="private">Privado (solo yo)</option>
+        <option value="restricted">Restringido</option>
+      </select>
+
+      <label>Roles permitidos</label>
+      <div>
+        <label style="margin-right:8px"><input type="checkbox" name="allowedRoles" value="admin"> admin</label>
+        <label><input type="checkbox" name="allowedRoles" value="empleado"> empleado</label>
+      </div>
+
+      <label>Usuarios permitidos (IDs, coma)</label>
+      <input type="text" name="allowedUsers" placeholder="ej: id1,id2,id3">
+    </div>
+
+    <input type="text" name="title" placeholder="Título (opcional)">
+    <textarea name="notes" id="notes" placeholder="Notas (opcional)"></textarea>
+
+    <button class="btn-login" type="submit">Subir</button>
+  </form>
+
+  <!-- Lista de archivos -->
+  <div id="emp-files" style="margin-top:18px;display:grid;gap:10px"></div>
+  
+</div>
+
+</section>
+
+
+<footer class="footer-dark" aria-label="Pie de página">
+    <div class="footer-wrap">
+      <!-- Col 1: Marca -->
+      <div class="fcol f-about">
+        <h3>ÉTHICASALUD CONSULTORES S.A.S</h3>
+        <p>
+          ¡Transformamos nuestro conocimiento y experiencia<br>
+          en un servicio excepcional!
+        </p>
+      </div>
+  
+      <!-- Col 2: Enlaces -->
+      <nav class="fcol f-links" aria-label="Enlaces de interés">
+        <h3>ENLACES DE INTERÉS</h3>
+        <ul>
+          <li><a href="#/ingresar-empleados">Ingresar empleados</a></li>
+          <li><a href="#/contacto">contacto</a></li>
+          <li><a href="#/servicios">Nuestros servicios</a></li>
+        </ul>
+      </nav>
+  
+      <!-- Col 3: Contacto -->
+      <div class="fcol f-contact">
+        <h3>CONTÁCTENOS</h3>
+        <ul class="contact-list">
+          <li>
+            <span class="ico">
+              <!-- location -->
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"/></svg>
+            </span>
+            Bogotá, Colombia
+          </li>
+          <li>
+            <span class="ico">
+              <!-- phone/whatsapp -->
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M20 3H4a1 1 0 0 0-1 1v16l4-4h13a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1Z"/></svg>
+            </span>
+            <a href="tel:+573001234567">+57 300 123 4567</a>
+          </li>
+          <li>
+            <span class="ico">
+              <!-- mail -->
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v1l10 6 10-6V6a2 2 0 0 0-2-2Zm0 6.3-8.47 5.08a1 1 0 0 1-1.06 0L2 10.3V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-7.7Z"/></svg>
+            </span>
+            <a href="mailto:contacto@ethicasalud.com">contacto@ethicasalud.com</a>
+          </li>
+        </ul>
+      </div>
+  
+      <!-- Col 4: Social -->
+      <div class="fcol f-social">
+        <h3>SOCIAL</h3>
+        <p>¡Síguenos en nuestras redes sociales!</p>
+        <div class="social-row">
+          <a class="social-btn fb" aria-label="Facebook" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M13 10h2.5l.5-3H13V5.5c0-.9.3-1.5 1.6-1.5H16V1.1C15.3 1 14.3 1 13.3 1 11 1 9.5 2.3 9.5 5v2H7v3h2.5v9h3.5v-9Z"/></svg>
+          </a>
+          <a class="social-btn ig" aria-label="Instagram" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5c3 0 3.4 0 4.6.1 1.2.1 2 .3 2.7.7.7.4 1.3 1 1.7 1.7.4.7.6 1.5.7 2.7.1 1.2.1 1.6.1 4.6s0 3.4-.1 4.6c-.1 1.2-.3 2-.7 2.7-.4.7-1 1.3-1.7 1.7-.7.4-1.5.6-2.7.7-1.2.1-1.6.1-4.6.1s-3.4 0-4.6-.1c-1.2-.1-2-.3-2.7-.7a4.4 4.4 0 0 1-1.7-1.7c-.4-.7-.6-1.5-.7-2.7C2 15.4 2 15 2 12s0-3.4.1-4.6c.1-1.2.3-2 .7-2.7.4-.7 1-1.3 1.7-1.7.7-.4 1.5-.6 2.7-.7C8.6 2 9 2 12 2Zm0 3.2a6.8 6.8 0 1 1 0 13.6 6.8 6.8 0 0 1 0-13.6Zm5-1.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"/></svg>
+          </a>
+          <a class="social-btn ln" aria-label="LinkedIn" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM3 8.98h4v12H3v-12ZM14.5 9a4.5 4.5 0 0 0-3.5 1.7V9h-4v12h4v-6.4c0-1.7.9-2.6 2.2-2.6s2.3 1 2.3 2.6V21h4v-6.9C19.5 10.9 17.7 9 14.5 9Z"/></svg>
+          </a>
+          <a class="social-pill" href="#/quienes" aria-label="Conócenos">Conócenos</a>
+        </div>
+      </div>
+    </div>
+  
+    <div class="footer-legal" role="contentinfo">
+      <div class="footer-legal-wrap">
+        <p>© 2025 EthicaSalud Consultores S.A.S</p>
+        <ul>
+          <li><a href="/privacidad.html">Privacidad</a></li>
+          <li><a href="/terminos.html">Términos</a></li>
+        </ul>
+      </div>
+    </div>
+</footer>
+
+<!-- archivos -->
+<script src="EthicaSalud.js"></script>
+<script src="quienes.js"></script>
+<script src="router-lite.js"></script>
+<link rel="stylesheet" href="juego.css">
+<script src="juego.js" defer></script>
+
+
+
+</body>
+</html>
