@@ -417,24 +417,22 @@ if (document.readyState === "loading") {
   };
 })();
 
-/* ============ Noticias (frontend) ============ */
+/* ============ Noticias (frontend) — versión solo frontend ============ */
+
+/**
+ * Cargamos las noticias directamente del repo de GitHub:
+ * data/news.json
+ */
 const noticiasSection = document.getElementById("noticias");
-const attrApi = noticiasSection?.dataset?.api;
-const isFileProto = location.protocol === "file:";
-const isLocalHost = ["localhost", "127.0.0.1"].includes(location.hostname);
 
-// En local usamos http://localhost:3000, en producción mismo dominio ("")
-const API_BASE =
-  attrApi ||
-  (isFileProto || isLocalHost ? "http://localhost:3000" : "");
-
-// Vamos a probar 2 rutas posibles: /api/news y /news
-const NEWS_ENDPOINTS = ["/api/news", "/news"];
+// URL cruda del JSON en GitHub
+const GITHUB_NEWS_URL =
+  "https://raw.githubusercontent.com/laurarosas45/EthicaSaludConsultores/main/data/news.json";
 
 const stateNews = {
   query: "",
   tag: "",
-  sort: "recent",
+  sort: "recent", // "recent" | "old"
   page: 1,
   pageSize: 6,
   hasMore: true,
@@ -456,12 +454,7 @@ const safeEl = (k) => {
   return !!els[k];
 };
 
-const formatDate = (iso) =>
-  new Date(iso).toLocaleDateString("es-MX", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+const clearGrid = () => safeEl("grid") && (els.grid.innerHTML = "");
 
 function renderSkeletons(n = 6) {
   if (!safeEl("tplSkeleton") || !safeEl("grid")) return;
@@ -472,7 +465,16 @@ function renderSkeletons(n = 6) {
   els.grid.appendChild(f);
 }
 
-const clearGrid = () => safeEl("grid") && (els.grid.innerHTML = "");
+const formatDate = (iso) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("es-MX", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
 const safeHost = (u) => {
   try {
@@ -494,52 +496,106 @@ const mapTagToLabel = (tag) =>
     }[tag] ?? "General"
   );
 
+// Aquí guardamos TODO el arreglo de noticias
+let ALL_NEWS = [];
+
 /**
- * Intenta llamar a /api/news y, si da 404, prueba /news.
- * Si algo falla, lanza error.
+ * Normaliza cada item de news.json para que
+ * el frontend siempre tenga las mismas claves.
  */
-async function fetchNewsData(queryString) {
-  let lastError = null;
+function normalizeNewsItem(raw) {
+  const tagRaw = (raw.tag || raw.category || "").toString().toLowerCase();
 
-  for (const endpoint of NEWS_ENDPOINTS) {
-    const url = `${API_BASE}${endpoint}?${queryString}`;
-    try {
-      console.log("[Noticias] Fetch:", url);
-      const res = await fetch(url, {
-        headers: { Accept: "application/json" },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        console.log("[Noticias] OK desde", endpoint, data);
-        return data;
-      }
-
-      // Si es 404 probamos con el siguiente endpoint
-      if (res.status === 404) {
-        console.warn("[Noticias] 404 en", endpoint);
-        lastError = new Error(`404 en ${endpoint}`);
-        continue;
-      }
-
-      // Otros errores los guardamos y no intentamos más
-      lastError = new Error(`HTTP ${res.status} en ${endpoint}`);
-      console.error("[Noticias] Error HTTP:", res.status, "en", endpoint);
-      break;
-    } catch (err) {
-      console.warn("[Noticias] Error de red en", endpoint, err);
-      lastError = err;
-    }
-  }
-
-  throw lastError || new Error("No se pudo contactar el API de noticias");
+  return {
+    id: raw.id || raw._id || crypto.randomUUID?.() || String(Date.now()),
+    title: raw.title || raw.headline || "Sin título",
+    summary: raw.summary || raw.description || "",
+    url: raw.url || raw.link || "#",
+    tag: tagRaw,
+    published_at:
+      raw.published_at || raw.publishedAt || raw.date || raw.fecha || null,
+    source_url: raw.source_url || raw.sourceUrl || raw.url || raw.link || "#",
+    source_name: raw.source_name || raw.source || "",
+    cover_image: raw.cover_image || raw.image || raw.image_url || "",
+  };
 }
 
-function renderNews(items, append = false) {
-  if (!safeEl("tplCard") || !safeEl("grid")) return;
-  if (!append) clearGrid();
+/**
+ * Carga el JSON de GitHub una sola vez.
+ */
+async function ensureNewsLoaded() {
+  if (ALL_NEWS.length) return;
 
+  console.log("[Noticias] Cargando data desde GitHub…", GITHUB_NEWS_URL);
+  const res = await fetch(GITHUB_NEWS_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status} al leer news.json`);
+
+  const data = await res.json();
+  const rawItems = Array.isArray(data) ? data : data.items || [];
+
+  ALL_NEWS = rawItems.map(normalizeNewsItem);
+  console.log("[Noticias] Total noticias cargadas:", ALL_NEWS.length);
+}
+
+/**
+ * Aplica búsqueda, filtro, orden y paginación sobre ALL_NEWS
+ * y pinta el resultado.
+ */
+function applyAndRenderNews() {
+  if (!safeEl("grid") || !safeEl("tplCard")) return;
+
+  clearGrid();
+
+  let items = [...ALL_NEWS];
+
+  // 1) Búsqueda por texto
+  if (stateNews.query) {
+    const q = stateNews.query.toLowerCase();
+    items = items.filter(
+      (it) =>
+        it.title.toLowerCase().includes(q) ||
+        it.summary.toLowerCase().includes(q)
+    );
+  }
+
+  // 2) Filtro por tag
+  if (stateNews.tag) {
+    items = items.filter((it) => it.tag === stateNews.tag);
+  }
+
+  // 3) Orden
+  items.sort((a, b) => {
+    const da = a.published_at ? new Date(a.published_at).getTime() : 0;
+    const db = b.published_at ? new Date(b.published_at).getTime() : 0;
+    return stateNews.sort === "old" ? da - db : db - da;
+  });
+
+  // 4) Paginación
+  const start = 0;
+  const end = stateNews.page * stateNews.pageSize;
+  const pageItems = items.slice(start, end);
+  stateNews.hasMore = end < items.length;
+
+  renderNews(pageItems);
+
+  if (safeEl("loadMore")) {
+    els.loadMore.hidden = !stateNews.hasMore;
+  }
+
+  if (!pageItems.length) {
+    const d = document.createElement("div");
+    d.style.opacity = ".9";
+    d.textContent = "Sin resultados para estos filtros.";
+    els.grid.appendChild(d);
+  }
+}
+
+/**
+ * Dibuja tarjetas de noticias.
+ */
+function renderNews(items) {
   const frag = document.createDocumentFragment();
+
   const io = new IntersectionObserver(
     (entries, ob) =>
       entries.forEach((e) => {
@@ -554,6 +610,7 @@ function renderNews(items, append = false) {
 
   for (const it of items) {
     const node = els.tplCard.content.cloneNode(true);
+
     const link = node.querySelector(".cover-link");
     const img = node.querySelector(".cover");
     const title = node.querySelector(".title");
@@ -568,8 +625,9 @@ function renderNews(items, append = false) {
     summary.textContent = it.summary || "";
     badge.textContent = mapTagToLabel(it.tag);
     date.textContent = it.published_at ? formatDate(it.published_at) : "";
-    sourceLink.href = it.source_url ?? it.url;
-    sourceLink.textContent = it.source_name ?? safeHost(it.url);
+
+    sourceLink.href = it.source_url || it.url;
+    sourceLink.textContent = it.source_name || safeHost(it.url);
 
     img.alt = it.title || "Noticia";
     img.dataset.src =
@@ -583,7 +641,7 @@ function renderNews(items, append = false) {
 }
 
 /**
- * Carga primera página de noticias o recarga filtros.
+ * Primera carga (o recarga de filtros)
  */
 async function fetchNews({ reset = false } = {}) {
   if (stateNews.isLoading) return;
@@ -598,29 +656,11 @@ async function fetchNews({ reset = false } = {}) {
   }
 
   try {
-    const params = new URLSearchParams({
-      q: stateNews.query,
-      tag: stateNews.tag,
-      sort: stateNews.sort,
-      page: String(stateNews.page),
-      pageSize: String(stateNews.pageSize),
-    });
-
-    const data = await fetchNewsData(params.toString());
+    await ensureNewsLoaded();
     clearGrid();
-    renderNews(data.items || [], false);
-
-    stateNews.hasMore = !!data.hasMore;
-    safeEl("loadMore") && (els.loadMore.hidden = !stateNews.hasMore);
-
-    if ((data.items || []).length === 0) {
-      const d = document.createElement("div");
-      d.style.opacity = ".9";
-      d.textContent = "Sin resultados para estos filtros.";
-      els.grid.appendChild(d);
-    }
+    applyAndRenderNews();
   } catch (err) {
-    console.error("[Noticias] Error final:", err);
+    console.error("[Noticias] Error:", err);
     clearGrid();
     if (safeEl("grid")) {
       const d = document.createElement("div");
@@ -635,40 +675,13 @@ async function fetchNews({ reset = false } = {}) {
 }
 
 /**
- * Carga más resultados (paginación).
+ * Botón "Cargar más" — aquí solo aumentamos la página
+ * y volvemos a aplicar filtros sobre ALL_NEWS.
  */
-async function loadMore() {
+function loadMore() {
   if (!stateNews.hasMore || stateNews.isLoading) return;
-  stateNews.isLoading = true;
-
-  safeEl("loadMore") &&
-    ((els.loadMore.disabled = true),
-    (els.loadMore.textContent = "Cargando..."));
-
-  try {
-    stateNews.page += 1;
-
-    const params = new URLSearchParams({
-      q: stateNews.query,
-      tag: stateNews.tag,
-      sort: stateNews.sort,
-      page: String(stateNews.page),
-      pageSize: String(stateNews.pageSize),
-    });
-
-    const data = await fetchNewsData(params.toString());
-    renderNews(data.items || [], true);
-
-    stateNews.hasMore = !!data.hasMore;
-    safeEl("loadMore") && (els.loadMore.hidden = !stateNews.hasMore);
-  } catch (e) {
-    console.error("[Noticias] loadMore:", e);
-  } finally {
-    safeEl("loadMore") &&
-      ((els.loadMore.disabled = false),
-      (els.loadMore.textContent = "Cargar más"));
-    stateNews.isLoading = false;
-  }
+  stateNews.page += 1;
+  applyAndRenderNews();
 }
 
 const debounce = (fn, wait = 350) => {
