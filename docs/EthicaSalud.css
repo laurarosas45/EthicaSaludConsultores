@@ -2898,3 +2898,23 @@ nav ul li a.active{
     text-align: center;
   }
 }
+
+/* ===== Ajustes SOLO para celulares ===== */
+@media (max-width: 640px){
+
+  /* 1) Bajar un poco el mensaje de bienvenida para separarlo del menú */
+  #inicio header{
+    padding-top: clamp(220px, 36vh, 320px);  /* más espacio bajo el menú */
+  }
+
+  /* 2) Centrar el botón del juego en móviles */
+  .acciones{
+    justify-content: center;           /* centra el grupo de botones */
+  }
+
+  #juego-consultoria .btn-primario{
+    margin-left: 0;                    /* quitamos el empuje raro */
+    display: inline-block;
+    text-align: center;
+  }
+}
