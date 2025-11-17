@@ -2797,6 +2797,18 @@ Ingresar empleados (estilo Freepik) Solo CSS — pega debajo de tus estilos=====
   .file-acc .name{ max-width:48vw; }
 }
 
+/* BOTÓN DEL JUEGO CENTRADO EN CELULAR */
+@media (max-width: 640px){
+  .acciones{
+    justify-content: center;   /* centra el contenedor de botones */
+  }
+
+  #juego-consultoria .btn-primario{
+    margin: 16px auto 0;       /* espacio arriba y centrado */
+    display: block;
+    text-align: center;
+  }
+}
 
 .seccion-por-que, #servicios, .seccion-noticias, #contacto{
   margin-bottom:0 !important; padding-bottom:0 !important;
@@ -2936,22 +2948,19 @@ nav ul li a.active{
 
 /* ===== MENU SOBRE LA IMAGEN EN TODAS LAS SECCIONES (MÓVIL) ===== */
 @media (max-width: 640px){
-
   header[role="banner"]{
     background: transparent !important;
     backdrop-filter: blur(12px);
   }
 
-  /* --- Cada sección debe empezar MÁS ABAJO para que el menú no la tape --- */
   #servicios,
   #quienes,
   #noticias,
   #contacto {
-    padding-top: 100px !important;   /* separa el contenido del menú */
+    padding-top: 100px !important;
     scroll-margin-top: 110px !important;
   }
 
-  /* Corrección específica para "LO QUE HACEMOS" */
   #servicios h2,
   #servicios .texto-verde,
   #servicios .subtitulo-servicios {
@@ -2959,3 +2968,39 @@ nav ul li a.active{
   }
 }
 
+/* ===== HEADER RESPONSIVE (MÓVIL) ===== */
+@media (max-width: 768px){
+  header[role="banner"]{
+    flex-wrap: wrap;              /* logo arriba, menú abajo */
+    row-gap: 6px;
+    padding: 10px 12px;
+    background: rgba(15,23,42,0.92);   /* barra oscura, todo legible */
+    backdrop-filter: blur(10px);
+  }
+
+  #logo{
+    flex: 1 1 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  header[role="banner"] img{
+    height: 40px;
+  }
+
+  header[role="banner"] nav{
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+
+  header[role="banner"] nav ul{
+    justify-content: center;
+    flex-wrap: wrap;          /* si no cabe en una fila, hace dos */
+    gap: 6px 10px;
+  }
+
+  header[role="banner"] nav ul li a{
+    font-size: 0.95rem;
+    padding: 2px 6px;
+  }
+}
