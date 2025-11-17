@@ -19,7 +19,7 @@
   const pantallaResultado = document.getElementById("pantalla-resultado");
   const btnIniciar = document.getElementById("btn-iniciar");
   const btnSiguiente = document.getElementById("btn-siguiente");
-  const btnReintentar = document.getElementById("btn-reintentar");
+  const btnReintentar = document.getElementElementById("btn-reintentar");
   const textoPregunta = document.getElementById("texto-pregunta");
   const contOpciones = document.querySelector(".opciones");
   const numActual = document.getElementById("num-actual");
@@ -432,7 +432,7 @@ const GITHUB_NEWS_URL =
 const stateNews = {
   query: "",
   tag: "",
-  sort: "recent", // "recent" | "old"
+  sort: "recent", // "recent" | "oldest"
   page: 1,
   pageSize: 6,
   hasMore: true,
@@ -574,7 +574,8 @@ function applyAndRenderNews() {
   items.sort((a, b) => {
     const da = a.published_at ? new Date(a.published_at).getTime() : 0;
     const db = b.published_at ? new Date(b.published_at).getTime() : 0;
-    return stateNews.sort === "old" ? da - db : db - da;
+    // usar "oldest" como value del select
+    return stateNews.sort === "oldest" ? da - db : db - da;
   });
 
   // 4) Paginación
@@ -1147,7 +1148,10 @@ const CHAT_API_BASE =
 
   async function downloadFile(id, cfg, token) {
     const API = String(cfg.base).replace(/\/+$/, "");
-    if (!confirm("¿Seguro que deseas eliminar este archivo?")) return;
+
+    // ✅ Texto corregido: ya no dice "eliminar"
+    if (!confirm("¿Seguro que deseas descargar este archivo?")) return;
+
     try {
       const r = await fetch(
         `${API}${cfg.downloadPattern.replace(
