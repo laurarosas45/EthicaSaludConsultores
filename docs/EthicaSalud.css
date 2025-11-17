@@ -1640,319 +1640,351 @@ footer.footer-dark .footer-legal{
 
 
 /* =======QUIÉNES SOMOS — Dark elegante=======*/
-   .quienes-wrap{
-    --qs-bg: url("imagen/somos/color claro.png");
-    --qs-surface: #0f172a;      /* slate-900 suave */
-    --qs-surface-2:#111827;     /* un toque más claro */
-    --qs-text:    #e5eef7;      /* texto principal */
-    --qs-text-2:  #a7b4c7;      /* texto secundario */
-    --qs-accent:  #3ab46d;      /* verde marca */
-    --qs-accent-2:#1e73be;      /* azul institucional */
-    --qs-border:  #203047;      /* bordes sutiles */
-    --qs-wrap:    1200px;
-    --qs-radius:  16px;
-    --qs-shadow:  0 18px 40px rgba(2,6,23,.35);
-    --qs-ring:    0 0 0 3px rgba(58,180,109,.18);
-    color: var(--qs-text);
-    background: var(--qs-surface);
-  }
-    .quienes-hero{
-    position: relative;
-    min-height: clamp(380px, 48vw, 560px);
-    display: grid;
-    place-items: center;
-    text-align: left;
-    background:
-      linear-gradient(180deg, rgba(0, 4, 15, 0.936) 0%, rgba(6,12,30,.88) 85%),
-      var(--qs-bg) center/cover no-repeat,
-      var(--qs-surface);
-    isolation: isolate;
-  }
-  .quienes-overlay{
-    position:absolute; inset:0;
-    background: radial-gradient(1200px 600px at 20% 15%, rgba(58,180,109,.25), transparent 55%);
-    mix-blend-mode: screen;
-    pointer-events:none;
-    z-index:-1;
-  }
-  .quienes-titulos{
-    width: min(var(--qs-wrap), 100%);
-    margin: 0 auto;
-    padding: clamp(28px, 5vw, 48px) clamp(16px, 4vw, 48px);
-  }
-  .quienes-titulos .eyebrow{
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--qs-text-2);
-    font-weight: 800;
-    margin: 0 0 6px;
-  }
-  .quienes-titulos h1{
-    margin: 0 0 10px;
-    font-size: clamp(32px, 6vw, 56px);
-    line-height: 1.04;
-    font-weight: 900;
-    color: #fff;
-    text-shadow: 0 6px 30px rgba(0,0,0,.4);
-  }
-  .quienes-titulos .intro{
-    max-width: 70ch;
-    color: var(--qs-text-2);
-    font-size: clamp(1rem, 2.2vw, 1.1rem);
-  }  
-  .valores{
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-    gap: clamp(12px, 2.2vw, 22px);
-    margin: clamp(16px, 3vw, 24px) 0 0;
-  }
-  .valores h3{
-    margin: 0 0 10px;
-    font-size: 1.05rem;
-    color: #cfe9d8;
-    letter-spacing: .02em;
-  }
-  .valores .chips{
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 10px;
-    list-style: none; 
-    margin: 0; 
-    padding: 0;
-  }
-  .valores .chips li{
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.08);
-    color: var(--qs-text);
-    font-weight: 600;
-    box-shadow: 0 8px 18px rgba(2,6,23,.25);
-  }
-  .capabilities{
-    margin-top: clamp(14px, 3vw, 22px);
-  }
-  .capabilities p{
-    max-width: 75ch;
-    padding: 14px 16px;
-    border-radius: 12px;
-    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-    border: 1px solid rgba(255,255,255,.08);
-  } 
-  .quienes-subnav{
-    position: center;
-    top: calc(var(--header-h, 110px) - 2px);
-    z-index: 5;
-    background: #2ea862;               /* verde sólido */
-    backdrop-filter: none;             /* sin transparencia */
-    border-bottom: none;   }
-  .quienes-subnav ul{
-    max-width: var(--qs-wrap);
-    margin: 0 auto;
-    padding: 10px clamp(16px, 4vw, 48px);
-    display: flex; 
-    gap: 10px; 
-    flex-wrap: wrap;
-    list-style: none;
-  }
-  .quienes-subnav a{
-    display: inline-block;
-    padding: 8px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--qs-border);
-    color: var(--qs-text-2);
-    text-decoration: none;
-    background: rgba(255,255,255,.03);
-    transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, 
-    background .2s ease, color .2s ease;
-  }
-  .quienes-subnav a:hover{
-    color:#fff; 
-    border-color: #2c425f;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(2,6,23,.28);
-  }
-  .quienes-subnav a.active{
-    color: #062b14;
-    background: linear-gradient(180deg, #2ea862 100%);
-    border-color: transparent;
-    box-shadow: 0 10px 24px rgba(58,180,109,.28);
-  }
-  .quienes-bloque{
-    max-width: var(--qs-wrap);
-    margin: clamp(18px, 4vw, 28px) auto 0;
-    padding: 0 clamp(16px, 4vw, 48px);
-  }
-  .equipo-grid{
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0,1fr));
-    gap: clamp(12px, 2vw, 18px);
-    margin-top: clamp(12px, 3vw, 20px);
-  }
-  .persona{
-    perspective: 1200px;
-    outline: none;
-  }
-  .persona .card-inner{
-    position: relative;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform .7s cubic-bezier(.2,.65,.2,1);
-  }
-  .persona.flip:hover .card-inner,
-  .persona.flip:focus .card-inner{
-    transform: rotateY(180deg);
-  }
-  .card-face{
-    position: relative;
-    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    border: 1px solid rgba(255,255,255,.10);
-    border-radius: var(--qs-radius);
-    box-shadow: var(--qs-shadow);
-    padding: 14px;
-    min-height: 280px;
-    backface-visibility: hidden;
-    display: grid; align-content: start; gap: 8px;
-  }
-  .card-front img{
-    width: 100%; height: 180px; object-fit: cover;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.12);
-    background: #0b1220;
-  }
-  .card-front h3{
-    margin: 6px 0 0; font-size: 1.05rem; color: #eaf6ff;
-  }
-  .card-front .rol{ 
-    color: #c7d7ea; 
-    font-weight: 700; 
-  }
-  .card-front .bio{ 
-    color: var(--qs-text-2); 
-  } 
-  .card-back{
-    position: absolute; 
-    inset: 0;
-    transform: rotateY(180deg);
-  }
-  .card-back h4{
-    margin: 4px 0 6px; 
-    font-size: 1rem; 
-    color: #d7ffee;
-  }
-  .card-back ul{
-    margin: 0; 
-    padding-left: 16px; 
-    color: var(--qs-text-2);
-  } 
-  .impacto{
-    margin-top: clamp(18px, 4vw, 28px);
-  }
-  .qb-head h2{
-    margin: 0 0 6px; 
-    font-size: clamp(22px, 3.8vw, 30px); 
-    color: #eaf6ff;
-  }
-  .qb-head p{ 
-    margin: 0 0 10px; 
-    color: var(--qs-text-2); 
-  }
-  .impacto-grid{
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0,1fr));
-    gap: clamp(12px, 2vw, 18px);
-  }
-  .imp-card{
-    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: var(--qs-radius);
-    padding: 14px;
-    box-shadow: var(--qs-shadow);
-    transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
-  }
-  .imp-card:hover{
-    transform: translateY(-3px);
-    box-shadow: 0 24px 60px rgba(2,6,23,.40);
-    border-color: rgba(255,255,255,.16);
-  }
-  .imp-card h3{
-    margin: 0 0 6px; 
-    font-size: 1rem; 
-    color: #bde8ff;
-  }
-  .imp-card p{ 
-    margin: 0; 
-    color: var(--qs-text-2); }
-  
-  .texto-largo{
-    margin-top: 8px;
-    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: var(--qs-radius);
-    padding: clamp(14px, 3.2vw, 18px);
-    box-shadow: var(--qs-shadow);
-  }
-  .texto-largo p{
-    color: var(--qs-text-2);
-    line-height: 1.7;
-    max-width: 80ch;
-  }
-  
-  .quienes-cta{
-    display: grid; 
-    place-items: center;
-    margin: clamp(18px, 4vw, 28px) 0 clamp(26px, 5vw, 40px);
-  }
-  .quienes-cta .btn-primario{
-    display: inline-block;
-    padding: 12px 20px;
-    border-radius: 12px;
-    border: 1px solid #79d49c;
-    background: linear-gradient(180deg, var(--qs-accent) 0%, #2ea862 100%);
-    color: #062b14; 
-    font-weight: 900; 
-    text-decoration: none;
-    box-shadow: 0 16px 38px rgba(58,180,109,.28);
-    transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
-  }
-  .quienes-cta .btn-primario:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 22px 60px rgba(58,180,109,.35);
-    filter: saturate(1.05);
-  }
-.quienes-cta .btn-primario:focus-visible{ 
-    outline: none; 
-    box-shadow: var(--qs-ring); 
-  }
-.persona:focus-visible{
-    outline: none;
-    box-shadow: var(--qs-ring);
-    border-radius: var(--qs-radius);
-  }
-@media (prefers-reduced-motion: reduce){
-    .persona .card-inner,
-    .imp-card,
-    .quienes-subnav a,
-    .quienes-cta .btn-primario{ 
-      transition: none !important; 
-    }
-  }
-@media (max-width: 1024px){
-    .equipo-grid{ grid-template-columns: repeat(2, 1fr); }
-    .impacto-grid{ grid-template-columns: repeat(2, 1fr); }
-  }
-@media (max-width: 640px){
-    .valores{ grid-template-columns: 1fr; }
-    .equipo-grid, .impacto-grid{ grid-template-columns: 1fr; }
-    .quienes-titulos{ text-align: left; }
-  }
-.quienes-hero {
-  padding-top: clamp(180px, 28vh, 260px); /* antes 0px, ahora deja aire arriba */
+.quienes-wrap{
+  --qs-bg: url("imagen/somos/color claro.png");
+  --qs-surface: #0f172a;      
+  --qs-surface-2:#111827;     
+  --qs-text:    #e5eef7;      
+  --qs-text-2:  #a7b4c7;      
+  --qs-accent:  #3ab46d;      
+  --qs-accent-2:#1e73be;      
+  --qs-border:  #203047;      
+  --qs-wrap:    1200px;
+  --qs-radius:  16px;
+  --qs-shadow:  0 18px 40px rgba(2,6,23,.35);
+  --qs-ring:    0 0 0 3px rgba(58,180,109,.18);
+  color: var(--qs-text);
+  background: var(--qs-surface);
+}
+
+.quienes-hero{
+  position: relative;
+  min-height: clamp(380px, 48vw, 560px);
+  display: grid;
+  place-items: center;
+  text-align: left;
+  background:
+    linear-gradient(180deg, rgba(0, 4, 15, 0.936) 0%, rgba(6,12,30,.88) 85%),
+    var(--qs-bg) center/cover no-repeat,
+    var(--qs-surface);
+  isolation: isolate;
+  padding-top: clamp(180px, 28vh, 260px);
 }
 @media (min-width: 1024px) {
   .quienes-hero {
-    padding-top: 190px; /* solo desktop */
+    padding-top: 190px;
   }
+}
+
+.quienes-overlay{
+  position:absolute; inset:0;
+  background: radial-gradient(1200px 600px at 20% 15%, rgba(58,180,109,.25), transparent 55%);
+  mix-blend-mode: screen;
+  pointer-events:none;
+  z-index:-1;
+}
+
+.quienes-titulos{
+  width: min(var(--qs-wrap), 100%);
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 48px) clamp(16px, 4vw, 48px);
+}
+.quienes-titulos .eyebrow{
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--qs-text-2);
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+.quienes-titulos h1{
+  margin: 0 0 10px;
+  font-size: clamp(32px, 6vw, 56px);
+  line-height: 1.04;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 6px 30px rgba(0,0,0,.4);
+}
+.quienes-titulos .intro{
+  max-width: 70ch;
+  color: var(--qs-text-2);
+  font-size: clamp(1rem, 2.2vw, 1.1rem);
+}
+
+.valores{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: clamp(12px, 2.2vw, 22px);
+  margin: clamp(16px, 3vw, 24px) 0 0;
+}
+.valores h3{
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  color: #cfe9d8;
+  letter-spacing: .02em;
+}
+.valores .chips{
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 10px;
+  list-style: none; 
+  margin: 0; 
+  padding: 0;
+}
+.valores .chips li{
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--qs-text);
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(2,6,23,.25);
+}
+
+.capabilities{
+  margin-top: clamp(14px, 3vw, 22px);
+}
+.capabilities p{
+  max-width: 75ch;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.quienes-subnav{
+  position: center;
+  top: calc(var(--header-h, 110px) - 2px);
+  z-index: 5;
+  background: #2ea862;
+  border-bottom: none;
+}
+.quienes-subnav ul{
+  max-width: var(--qs-wrap);
+  margin: 0 auto;
+  padding: 10px clamp(16px, 4vw, 48px);
+  display: flex; 
+  gap: 10px; 
+  flex-wrap: wrap;
+  list-style: none;
+}
+.quienes-subnav a{
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--qs-border);
+  color: var(--qs-text-2);
+  text-decoration: none;
+  background: rgba(255,255,255,.03);
+  transition: .2s ease;
+}
+.quienes-subnav a:hover{
+  color:#fff; 
+  border-color: #2c425f;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(2,6,23,.28);
+}
+.quienes-subnav a.active{
+  color: #062b14;
+  background: linear-gradient(180deg, #2ea862 100%);
+  border-color: transparent;
+  box-shadow: 0 10px 24px rgba(58,180,109,.28);
+}
+
+.quienes-bloque{
+  max-width: var(--qs-wrap);
+  margin: clamp(18px, 4vw, 28px) auto 0;
+  padding: 0 clamp(16px, 4vw, 48px);
+}
+
+/* ===================== TARJETAS — EQUIPO ===================== */
+.equipo-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: clamp(12px, 2vw, 18px);
+  margin-top: clamp(12px, 3vw, 20px);
+}
+
+.persona{
+  perspective: 1200px;
+  outline: none;
+}
+.persona .card-inner{
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .7s cubic-bezier(.2,.65,.2,1);
+}
+.persona.flip:hover .card-inner,
+.persona.flip:focus .card-inner{
+  transform: rotateY(180deg);
+}
+
+.card-face{
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: var(--qs-radius);
+  box-shadow: var(--qs-shadow);
+  padding: 14px;
+  min-height: 320px;
+  backface-visibility: hidden;
+  display: grid; 
+  align-content: start; 
+  gap: 8px;
+}
+
+/* === 🚀 IMAGEN COMPLETA SIN RECORTE === */
+.card-front img{
+  width: 100%;
+  height: 240px;         
+  object-fit: contain;     /* 👈 YA NO RECORTA */
+  background: #0b1220;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 6px;            /* aire alrededor */
+}
+
+.card-front h3{
+  margin: 6px 0 0; 
+  font-size: 1.05rem; 
+  color: #eaf6ff;
+}
+.card-front .rol{ 
+  color: #c7d7ea; 
+  font-weight: 700; 
+}
+.card-front .bio{ 
+  color: var(--qs-text-2); 
+}
+
+.card-back{
+  position: absolute; 
+  inset: 0;
+  transform: rotateY(180deg);
+}
+.card-back h4{
+  margin: 4px 0 6px; 
+  font-size: 1rem; 
+  color: #d7ffee;
+}
+.card-back ul{
+  margin: 0; 
+  padding-left: 16px; 
+  color: var(--qs-text-2);
+}
+
+/* ===================== IMPACTO ===================== */
+.impacto{
+  margin-top: clamp(18px, 4vw, 28px);
+}
+.qb-head h2{
+  margin: 0 0 6px; 
+  font-size: clamp(22px, 3.8vw, 30px); 
+  color: #eaf6ff;
+}
+.qb-head p{ 
+  margin: 0 0 10px; 
+  color: var(--qs-text-2); 
+}
+
+.impacto-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: clamp(12px, 2vw, 18px);
+}
+
+.imp-card{
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--qs-radius);
+  padding: 14px;
+  box-shadow: var(--qs-shadow);
+  transition: .2s ease;
+}
+.imp-card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 24px 60px rgba(2,6,23,.40);
+  border-color: rgba(255,255,255,.16);
+}
+.imp-card h3{
+  margin: 0 0 6px; 
+  font-size: 1rem; 
+  color: #bde8ff;
+}
+.imp-card p{ 
+  margin: 0; 
+  color: var(--qs-text-2); 
+}
+
+/* ===================== TEXTO LARGO ===================== */
+.texto-largo{
+  margin-top: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--qs-radius);
+  padding: clamp(14px, 3.2vw, 18px);
+  box-shadow: var(--qs-shadow);
+}
+.texto-largo p{
+  color: var(--qs-text-2);
+  line-height: 1.7;
+  max-width: 80ch;
+}
+
+/* ===================== CTA ===================== */
+.quienes-cta{
+  display: grid; 
+  place-items: center;
+  margin: clamp(18px, 4vw, 28px) 0 clamp(26px, 5vw, 40px);
+}
+.quienes-cta .btn-primario{
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid #79d49c;
+  background: linear-gradient(180deg, var(--qs-accent) 0%, #2ea862 100%);
+  color: #062b14; 
+  font-weight: 900; 
+  text-decoration: none;
+  box-shadow: 0 16px 38px rgba(58,180,109,.28);
+  transition: .2s ease;
+}
+.quienes-cta .btn-primario:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 22px 60px rgba(58,180,109,.35);
+}
+
+.quienes-cta .btn-primario:focus-visible{ 
+  outline: none; 
+  box-shadow: var(--qs-ring); 
+}
+
+/* ===================== ACCESIBILIDAD ===================== */
+.persona:focus-visible{
+  outline: none;
+  box-shadow: var(--qs-ring);
+  border-radius: var(--qs-radius);
+}
+
+/* ===================== REDUCIR MOTION ===================== */
+@media (prefers-reduced-motion: reduce){
+  .persona .card-inner,
+  .imp-card,
+  .quienes-subnav a,
+  .quienes-cta .btn-primario{
+    transition: none !important;
+  }
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 1024px){
+  .equipo-grid{ grid-template-columns: repeat(2, 1fr); }
+  .impacto-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px){
+  .valores{ grid-template-columns: 1fr; }
+  .equipo-grid, .impacto-grid{ grid-template-columns: 1fr; }
+  .quienes-titulos{ text-align: left; }
 }
 
 
