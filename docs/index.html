@@ -256,95 +256,154 @@
   </div>
 </section>
 <!-- SECCIÓN NOTICIAS Y ARTÍCULOS -->
-<section 
-v-pre 
-  id="noticias"
-  class="seccion-noticias"
-  aria-labelledby="noticias-titulo"
-  style="padding-top:120px; scroll-margin-top:120px;"
-  data-api="http://localhost:3000" >
-  <!-- ↑ Ajusta 120px al alto real de tu header si fuera distinto -->
+ <!-- SECCIÓN NOTICIAS Y ARTÍCULOS -->
+<section
+v-pre
+id="noticias"
+class="seccion-noticias"
+aria-labelledby="noticias-titulo"
+style="padding-top:120px; scroll-margin-top:120px;"
+>
+<!-- ↑ Ajusta 120px al alto real de tu header si fuera distinto -->
 
-  <div class="noticias-wrap">
+<div class="noticias-wrap">
 
-    <header class="noticias-header">
-      <p class="eyebrow">ACTUALIDAD REGULATORIA</p>
-      <h2 id="noticias-titulo">Noticias y artículos de consultoría y normas</h2>
-    </header>
+  <header class="noticias-header">
+    <p class="eyebrow">ACTUALIDAD REGULATORIA</p>
+    <h2 id="noticias-titulo">Noticias y artículos de consultoría y normas</h2>
+  </header>
 
-    <!-- Controles -->
-    <div class="noticias-controles" role="region" aria-label="Filtros y búsqueda">
-      <div class="buscador">
-        <input id="newsSearch" type="search" placeholder="Buscar por palabra clave (ej. NOM, habilitación, auditoría)..." aria-label="Buscar artículos">
-      </div>
-
-      <div class="chips" id="newsChips" role="tablist" aria-label="Temas">
-        <!-- data-tag="" significa “todos” -->
-        <button class="chip is-active" data-tag="" role="tab" aria-selected="true">Todos</button>
-        <button class="chip" data-tag="normatividad" role="tab">Normatividad</button>
-        <button class="chip" data-tag="habilitacion" role="tab">Habilitación</button>
-        <button class="chip" data-tag="auditorias" role="tab">Auditorías</button>
-        <button class="chip" data-tag="seguridad-paciente" role="tab">Seguridad del Paciente</button>
-        <button class="chip" data-tag="guias-oficiales" role="tab">Guías oficiales</button>
-      </div>
-
-      <div class="orden">
-        <label for="newsSort">Ordenar</label>
-        <select id="newsSort" aria-label="Ordenar resultados">
-          <option value="recent">Más recientes</option>
-          <option value="oldest">Más antiguos</option>
-          <option value="az">A → Z</option>
-          <option value="za">Z → A</option>
-        </select>
-      </div>
+  <!-- Controles -->
+  <div class="noticias-controles" role="region" aria-label="Filtros y búsqueda">
+    <div class="buscador">
+      <input
+        id="newsSearch"
+        type="search"
+        placeholder="Buscar por palabra clave (ej. NOM, habilitación, auditoría)..."
+        aria-label="Buscar artículos"
+      >
     </div>
 
-    <!-- Resultados -->
-    <div id="newsGrid" class="news-grid" aria-live="polite">
-      <!-- Cards se insertan por JS -->
+    <div class="chips" id="newsChips" role="tablist" aria-label="Temas">
+      <!-- data-tag="" significa “todos” -->
+      <button
+        class="chip is-active"
+        data-tag=""
+        role="tab"
+        aria-selected="true"
+      >Todos</button>
+
+      <button
+        class="chip"
+        data-tag="normatividad"
+        role="tab"
+        aria-selected="false"
+      >Normatividad</button>
+
+      <button
+        class="chip"
+        data-tag="habilitacion"
+        role="tab"
+        aria-selected="false"
+      >Habilitación</button>
+
+      <button
+        class="chip"
+        data-tag="auditorias"
+        role="tab"
+        aria-selected="false"
+      >Auditorías</button>
+
+      <button
+        class="chip"
+        data-tag="seguridad-paciente"
+        role="tab"
+        aria-selected="false"
+      >Seguridad del Paciente</button>
+
+      <button
+        class="chip"
+        data-tag="guias-oficiales"
+        role="tab"
+        aria-selected="false"
+      >Guías oficiales</button>
     </div>
 
-    <!-- Skeletons (cargan primero) -->
-    <template id="newsSkeletonTpl">
-      <article class="news-card skeleton">
-        <div class="cover"></div>
-        <div class="text">
-          <div class="line w70"></div>
-          <div class="line w50"></div>
-          <div class="meta">
-            <span class="badge"></span>
-            <span class="date"></span>
-          </div>
-        </div>
-      </article>
-    </template>
-
-    <!-- Template Card -->
-    <template id="newsCardTpl">
-      <article class="news-card">
-        <a class="cover-link" target="_blank" rel="noopener noreferrer">
-          <img class="cover" alt="">
-        </a>
-        <div class="text">
-          <a class="title" target="_blank" rel="noopener noreferrer"></a>
-          <p class="summary"></p>
-          <div class="meta">
-            <span class="badge"></span>
-            <span class="date"></span>
-          </div>
-          <div class="source">
-            Fuente: <a class="source-link" target="_blank" rel="noopener noreferrer"></a>
-          </div>
-        </div>
-      </article>
-    </template>
-
-    <!-- Paginación -->
-    <div class="paginacion">
-      <button id="loadMoreBtn" class="btn-primario" hidden>Cargar más</button>
+    <div class="orden">
+      <label for="newsSort">Ordenar</label>
+      <select id="newsSort" aria-label="Ordenar resultados">
+        <!-- Estos valores SÍ coinciden con ETHICASALUD.js: "recent" | "old" -->
+        <option value="recent">Más recientes</option>
+        <option value="old">Más antiguas</option>
+      </select>
     </div>
   </div>
+
+  <!-- Resultados -->
+  <div id="newsGrid" class="news-grid" aria-live="polite">
+    <!-- Cards se insertan por JS -->
+  </div>
+
+  <!-- Skeletons (cargan primero) -->
+  <template id="newsSkeletonTpl">
+    <article class="news-card skeleton">
+      <div class="cover"></div>
+      <div class="text">
+        <div class="line w70"></div>
+        <div class="line w50"></div>
+        <div class="meta">
+          <span class="badge"></span>
+          <span class="date"></span>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <!-- Template Card -->
+  <template id="newsCardTpl">
+    <article class="news-card">
+      <a
+        class="cover-link"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img class="cover" src="" alt="">
+      </a>
+      <div class="text">
+        <a
+          class="title"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+        ></a>
+        <p class="summary"></p>
+        <div class="meta">
+          <span class="badge"></span>
+          <span class="date"></span>
+        </div>
+        <div class="source">
+          Fuente:
+          <a
+            class="source-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          ></a>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <!-- Paginación -->
+  <div class="paginacion">
+    <button id="loadMoreBtn" class="btn-primario" hidden>
+      Cargar más
+    </button>
+  </div>
+</div>
 </section>
+
 <!-- CONTACTO  -->
 <section id="contacto" class="contacto-seccion" aria-labelledby="contacto-title">
   <div class="wrap">
@@ -515,7 +574,6 @@ v-pre
 </div>
                              <!-- fin de la pagina principal-->
                               
-<!--SUB-PÁGINA: QUIÉNES SOMOS-->
 <!--SUB-PÁGINA: QUIÉNES SOMOS-->
 <section id="quienes" class="quienes-wrap" data-view="quienes">
   <!-- HERO -->

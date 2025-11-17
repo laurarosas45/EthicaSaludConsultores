@@ -531,7 +531,14 @@ async function ensureNewsLoaded() {
   if (!res.ok) throw new Error(`HTTP ${res.status} al leer news.json`);
 
   const data = await res.json();
-  const rawItems = Array.isArray(data) ? data : data.items || [];
+
+  const rawItems = Array.isArray(data)
+    ? data
+    : Array.isArray(data.items)
+    ? data.items
+    : Array.isArray(data.news)
+    ? data.news
+    : [];
 
   ALL_NEWS = rawItems.map(normalizeNewsItem);
   console.log("[Noticias] Total noticias cargadas:", ALL_NEWS.length);
