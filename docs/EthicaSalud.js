@@ -427,7 +427,7 @@ const noticiasSection = document.getElementById("noticias");
 
 // URL cruda del JSON en GitHub
 const GITHUB_NEWS_URL =
-  "https://raw.githubusercontent.com/laurarosas45/EthicaSaludConsultores/refs/heads/main/data/news.json";
+  "https://raw.githubusercontent.com/laurarosas45/EthicaSaludConsultores/main/data/news.json";
 
 const stateNews = {
   query: "",
