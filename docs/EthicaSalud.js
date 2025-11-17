@@ -19,7 +19,7 @@
   const pantallaResultado = document.getElementById("pantalla-resultado");
   const btnIniciar = document.getElementById("btn-iniciar");
   const btnSiguiente = document.getElementById("btn-siguiente");
-  const btnReintentar = document.getElementElementById("btn-reintentar");
+  const btnReintentar = document.getElementById("btn-reintentar");
   const textoPregunta = document.getElementById("texto-pregunta");
   const contOpciones = document.querySelector(".opciones");
   const numActual = document.getElementById("num-actual");
@@ -432,7 +432,7 @@ const GITHUB_NEWS_URL =
 const stateNews = {
   query: "",
   tag: "",
-  sort: "recent", // "recent" | "oldest"
+  sort: "recent", // "recent" | "old"
   page: 1,
   pageSize: 6,
   hasMore: true,
@@ -574,8 +574,7 @@ function applyAndRenderNews() {
   items.sort((a, b) => {
     const da = a.published_at ? new Date(a.published_at).getTime() : 0;
     const db = b.published_at ? new Date(b.published_at).getTime() : 0;
-    // usar "oldest" como value del select
-    return stateNews.sort === "oldest" ? da - db : db - da;
+    return stateNews.sort === "old" ? da - db : db - da;
   });
 
   // 4) Paginación
@@ -1148,10 +1147,7 @@ const CHAT_API_BASE =
 
   async function downloadFile(id, cfg, token) {
     const API = String(cfg.base).replace(/\/+$/, "");
-
-    // ✅ Texto corregido: ya no dice "eliminar"
-    if (!confirm("¿Seguro que deseas descargar este archivo?")) return;
-
+    if (!confirm("¿Seguro que deseas eliminar este archivo?")) return;
     try {
       const r = await fetch(
         `${API}${cfg.downloadPattern.replace(
