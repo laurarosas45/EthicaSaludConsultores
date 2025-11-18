@@ -419,15 +419,19 @@ if (document.readyState === "loading") {
 
 /* ============ Noticias (frontend) — versión solo frontend ============ */
 
-/**
- * Cargamos las noticias directamente del repo de GitHub:
- * data/news.json
- */
+/* ============ Noticias (frontend) — usando API backend ============ */
+
 const noticiasSection = document.getElementById("noticias");
 
-// URL cruda del JSON en GitHub
-const GITHUB_NEWS_URL =
-  "https://raw.githubusercontent.com/laurarosas45/EthicaSaludConsultores/main/data/news.json";
+// Base para la API de noticias
+const NEWS_API_BASE =
+  location.protocol === "file:" ||
+  ["localhost", "127.0.0.1"].includes(location.hostname)
+    ? "http://localhost:3000"
+    : ""; // mismo dominio en producción
+
+// Pedimos muchas (hasta 50) y luego paginamos solo en el frontend
+const NEWS_API_URL = `${NEWS_API_BASE}/api/news?page=1&pageSize=50`;
 
 const stateNews = {
   query: "",
@@ -496,12 +500,12 @@ const mapTagToLabel = (tag) =>
     }[tag] ?? "General"
   );
 
-// Aquí guardamos TODO el arreglo de noticias
+// Aquí guardamos TODO el arreglo de noticias traídas del backend
 let ALL_NEWS = [];
 
 /**
- * Normaliza cada item de news.json para que
- * el frontend siempre tenga las mismas claves.
+ * Normaliza cada item para que el frontend tenga siempre
+ * las mismas claves, independientemente de cómo venga del backend.
  */
 function normalizeNewsItem(raw) {
   const tagRaw = (raw.tag || raw.category || "").toString().toLowerCase();
@@ -521,17 +525,18 @@ function normalizeNewsItem(raw) {
 }
 
 /**
- * Carga el JSON de GitHub una sola vez.
+ * Carga el JSON desde el backend una sola vez.
  */
 async function ensureNewsLoaded() {
   if (ALL_NEWS.length) return;
 
-  console.log("[Noticias] Cargando data desde GitHub…", GITHUB_NEWS_URL);
-  const res = await fetch(GITHUB_NEWS_URL, { cache: "no-store" });
-  if (!res.ok) throw new Error(`HTTP ${res.status} al leer news.json`);
+  console.log("[Noticias] Cargando data desde API…", NEWS_API_URL);
+  const res = await fetch(NEWS_API_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status} al leer /api/news`);
 
   const data = await res.json();
 
+  // el backend devuelve { ok:true, items:[...] }
   const rawItems = Array.isArray(data)
     ? data
     : Array.isArray(data.items)
@@ -577,7 +582,7 @@ function applyAndRenderNews() {
     return stateNews.sort === "old" ? da - db : db - da;
   });
 
-  // 4) Paginación
+  // 4) Paginación interna (solo frontend)
   const start = 0;
   const end = stateNews.page * stateNews.pageSize;
   const pageItems = items.slice(start, end);
@@ -603,18 +608,6 @@ function applyAndRenderNews() {
 function renderNews(items) {
   const frag = document.createDocumentFragment();
 
-  const io = new IntersectionObserver(
-    (entries, ob) =>
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          const img = e.target;
-          img.src = img.dataset.src;
-          ob.unobserve(img);
-        }
-      }),
-    { rootMargin: "100px" }
-  );
-
   for (const it of items) {
     const node = els.tplCard.content.cloneNode(true);
 
@@ -626,6 +619,7 @@ function renderNews(items) {
     const date = node.querySelector(".date");
     const sourceLink = node.querySelector(".source-link");
 
+    // enlaces y textos
     link.href = it.url;
     title.href = it.url;
     title.textContent = it.title || "Sin título";
@@ -636,10 +630,10 @@ function renderNews(items) {
     sourceLink.href = it.source_url || it.url;
     sourceLink.textContent = it.source_name || safeHost(it.url);
 
+    // ✅ aquí ponemos directamente el src de la imagen
     img.alt = it.title || "Noticia";
-    img.dataset.src =
+    img.src =
       it.cover_image || "https://picsum.photos/seed/ethica/800/500";
-    io.observe(img);
 
     frag.appendChild(node);
   }
@@ -735,7 +729,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupNewsEvents();
   fetchNews({ reset: true });
 });
-
 
 /* ========= Chat mini ========= */
 const CHAT_API_BASE =
