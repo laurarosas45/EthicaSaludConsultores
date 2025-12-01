@@ -996,10 +996,17 @@ const CHAT_API_BASE =
     }
     if (root === "servicios") {
       setActiveView("servicios");
-      setServiciosSub(sub === "calidad" ? "calidad" : "ambiental");
+    
+      // ✅ sub-vistas válidas de servicios
+      const validSubs = ["ambiental", "calidad", "pacmen", "seguridad"];
+    
+      // si el sub no es válido, cae por defecto en "ambiental"
+      const subKey = validSubs.includes(sub) ? sub : "ambiental";
+    
+      setServiciosSub(subKey);
       return;
     }
-    if (root === "quienes") {
+        if (root === "quienes") {
       setActiveView("quienes");
       setQuienesSub(
         ["vision", "mision", "conocenos"].includes(sub)
