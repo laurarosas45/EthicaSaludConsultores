@@ -764,82 +764,195 @@ style="padding-top:120px; scroll-margin-top:120px;"
 
 <!-- SERVICIOS (Vue.js + submenús)-->
 <section id="servicios-inicio" class="servicios-wrap" data-view="servicios">
-      <!-- HERO -->
-      <div class="servicios-hero" role="img" aria-label="Fondo Servicios">
-        <div class="servicios-overlay"></div>
-        <div class="servicios-titulos">
-          <p class="eyebrow">Lo que hacemos</p>
-          <h1>Servicios</h1>
-          <p class="intro">Acompañamiento técnico con enfoque normativo y resultados medibles.</p>
-        </div>
-      </div>
-    
-      <!-- Submenú local (tabs) -->
-      <nav class="servicios-subnav" aria-label="Secciones de Servicios">
-        <ul>
-          <li><a href="#/servicios/ambiental">Servicios de Habilitación</a></li>
-          <li><a href="#/servicios/calidad">Calidad</a></li>
-        </ul>
-      </nav>
-    
-      <!-- ==================== VISTA: AMBIENTAL ==================== -->
-      <section class="servicio-bloque" data-serv-view="ambiental">
-            
-        <div class="servicio-grid">
-          <article class="serv-card">
-            <h3>Diagnóstico y plan de cumplimiento</h3>
-            <p>Levantamiento de requisitos, brechas y hoja de ruta para licencias, permisos y reportes.</p>
-          </article>
-          <article class="serv-card">
-            <h3>Residuos y vertimientos</h3>
-            <p>Programas de manejo integral, caracterización, segregación y evidencias para autoridades.</p>
-          </article>
-          <article class="serv-card">
-            <h3>Huella e indicadores</h3>
-            <p>Inventarios de emisiones, consumo de agua/energía y tableros de seguimiento.</p>
-          </article>
-          <article class="serv-card">
-            <h3>Formación al equipo</h3>
-            <p>Capacitaciones prácticas con listas de chequeo y formatos trazables.</p>
-          </article>
-        </div>
-    
-        <aside class="servicio-nota">
-          <p><strong>Resultados:</strong> menos sanciones, auditorías fluidas y cultura ambiental activa.</p>
-        </aside>
-      </section>
-    
-      <!-- ===================== VISTA: CALIDAD ===================== -->
-      <section class="servicio-bloque" data-serv-view="calidad">
-    
-        <div class="servicio-grid">
-          <article class="serv-card">
-            <h3>Habilitación y estándares</h3>
-            <p>Implementación de requisitos (p. ej., Res. 3100/2019), evidencias y acompañamiento hasta acta.</p>
-          </article>
-          <article class="serv-card">
-            <h3>Auditoría interna</h3>
-            <p>Programas de auditoría clínica/administrativa, no conformidades y planes de mejora.</p>
-          </article>
-          <article class="serv-card">
-            <h3>Gestión del riesgo</h3>
-            <p>Mapas de riesgo, análisis de causas y barreras para eventos adversos.</p>
-          </article>
-          <article class="serv-card">
-            <h3>Documentación viva</h3>
-            <p>Procedimientos claros, control de versiones, inducción y reinducción al personal.</p>
-          </article>
-        </div>
-    
-        <aside class="servicio-nota">
-          <p><strong>Resultados:</strong> reducción de no conformidades, trazabilidad y experiencia del paciente segura.</p>
-        </aside>
-      </section>
-    
-      <!-- CTA común -->
-      <div class="servicios-cta">
-        <a class="btn-primario" href="#/contacto">Solicitar asesoría</a>
-      </div>
+  <!-- HERO -->
+  <div class="servicios-hero" role="img" aria-label="Fondo Servicios">
+    <div class="servicios-overlay"></div>
+    <div class="servicios-titulos">
+      <p class="eyebrow">Lo que hacemos</p>
+      <h1>Servicios</h1>
+      <p class="intro">
+        Acompañamiento técnico con enfoque normativo y resultados medibles.
+      </p>
+    </div>
+  </div>
+
+  <!-- Submenú local (tabs) -->
+  <nav class="servicios-subnav" aria-label="Secciones de Servicios">
+    <ul>
+      <li><a href="#/servicios/ambiental">Servicios de Habilitación</a></li>
+      <li><a href="#/servicios/calidad">Calidad</a></li>
+      <li><a href="#/servicios/pacmen">PACMEN</a></li>
+      <li><a href="#/servicios/seguridad">Seguridad y Salud</a></li>
+    </ul>
+  </nav>
+
+  <!-- ==================== VISTA: AMBIENTAL ==================== -->
+  <section class="servicio-bloque" data-serv-view="ambiental">
+    <div class="servicio-grid">
+      <article class="serv-card">
+        <h3>Diagnóstico y plan de cumplimiento</h3>
+        <p>
+          Levantamiento de requisitos, brechas y hoja de ruta para licencias,
+          permisos y reportes.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Residuos y vertimientos</h3>
+        <p>
+          Programas de manejo integral, caracterización, segregación y evidencias
+          para autoridades.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Huella e indicadores</h3>
+        <p>
+          Inventarios de emisiones, consumo de agua/energía y tableros de
+          seguimiento.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Formación al equipo</h3>
+        <p>
+          Capacitaciones prácticas con listas de chequeo y formatos trazables.
+        </p>
+      </article>
+    </div>
+
+    <aside class="servicio-nota">
+      <p>
+        <strong>Resultados:</strong> menos sanciones, auditorías fluidas y
+        cultura ambiental activa.
+      </p>
+    </aside>
+  </section>
+
+  <!-- ===================== VISTA: CALIDAD ===================== -->
+  <section class="servicio-bloque" data-serv-view="calidad">
+    <div class="servicio-grid">
+      <article class="serv-card">
+        <h3>Habilitación y estándares</h3>
+        <p>
+          Implementación de requisitos (p. ej., Res. 3100/2019), evidencias y
+          acompañamiento hasta acta.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Auditoría interna</h3>
+        <p>
+          Programas de auditoría clínica/administrativa, no conformidades y planes
+          de mejora.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Gestión del riesgo</h3>
+        <p>
+          Mapas de riesgo, análisis de causas y barreras para eventos adversos.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Documentación viva</h3>
+        <p>
+          Procedimientos claros, control de versiones, inducción y reinducción al
+          personal.
+        </p>
+      </article>
+    </div>
+
+    <aside class="servicio-nota">
+      <p>
+        <strong>Resultados:</strong> reducción de no conformidades, trazabilidad
+        y experiencia del paciente segura.
+      </p>
+    </aside>
+  </section>
+
+  <!-- ===================== VISTA: PACMEN ===================== -->
+  <section class="servicio-bloque" data-serv-view="pacmen">
+    <div class="servicio-grid">
+      <article class="serv-card">
+        <h3>Programa PACMEN</h3>
+        <p>
+          Diseño e implementación de Programas de Auditoría para el Mejoramiento
+          de la Calidad en la Atención en Salud (PACMEN), alineados con la
+          normatividad vigente.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Planes de mejoramiento</h3>
+        <p>
+          Definición, seguimiento y evaluación de planes de mejora derivados de
+          hallazgos en auditorías internas y externas.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Tableros e indicadores</h3>
+        <p>
+          Construcción de tableros de control que permiten monitorear el impacto
+          de PACMEN en calidad y seguridad del paciente.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Formación al equipo auditor</h3>
+        <p>
+          Capacitación a auditores internos y líderes de proceso para la
+          correcta ejecución del programa.
+        </p>
+      </article>
+    </div>
+
+    <aside class="servicio-nota">
+      <p>
+        <strong>Resultados:</strong> mejora continua, trazabilidad de acciones y
+        una cultura institucional orientada a la calidad.
+      </p>
+    </aside>
+  </section>
+
+  <!-- ================= SEGURIDAD Y SALUD EN EL TRABAJO ================= -->
+  <section class="servicio-bloque" data-serv-view="seguridad">
+    <div class="servicio-grid">
+      <article class="serv-card">
+        <h3>Implementación del SG-SST</h3>
+        <p>
+          Diseño, actualización e implementación del Sistema de Gestión de
+          Seguridad y Salud en el Trabajo acorde a requisitos legales.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Matrices de riesgo y controles</h3>
+        <p>
+          Identificación de peligros, valoración de riesgos y definición de
+          controles operacionales eficaces.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Programas de prevención</h3>
+        <p>
+          Programas de prevención de accidentes, enfermedades laborales y planes
+          de emergencia.
+        </p>
+      </article>
+      <article class="serv-card">
+        <h3>Capacitación y cultura SST</h3>
+        <p>
+          Talleres prácticos y acompañamiento para fortalecer la cultura de
+          autocuidado y cumplimiento.
+        </p>
+      </article>
+    </div>
+
+    <aside class="servicio-nota">
+      <p>
+        <strong>Resultados:</strong> menos incidentes, cumplimiento normativo y
+        bienestar integral para el equipo de trabajo.
+      </p>
+    </aside>
+  </section>
+
+  <!-- CTA común -->
+  <div class="servicios-cta">
+    <a class="btn-primario" href="#/contacto">Solicitar asesoría</a>
+  </div>
 </section>
 
 <!-- SUBPÁGINA: INGRESAR EMPLEADOS -->
