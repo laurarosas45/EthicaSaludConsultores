@@ -3007,3 +3007,56 @@ nav ul li a.active{
     padding: 2px 6px;
   }
 }
+
+/* ==== OVERRIDE NOTICIAS: grid + imagen de portada ==== */
+
+/* Grid flexible y responsive */
+.seccion-noticias .news-grid{
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Tarjeta limpia */
+.seccion-noticias .news-card{
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+}
+
+/* Contenedor de la imagen (asegura altura fija y bonita) */
+.seccion-noticias .news-card .cover-link{
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;     /* 🔹 mantiene proporción de video/tarjeta */
+  overflow: hidden;
+  background: var(--c-surface-2);
+}
+
+/* Imagen de portada */
+.seccion-noticias .news-card img.cover{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* 🔹 llena el espacio sin deformarse */
+  display: block;
+}
+
+/* Texto */
+.seccion-noticias .news-card .text{
+  padding: 16px 16px 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ajuste responsive extra por si acaso */
+@media (max-width: 640px){
+  .seccion-noticias .news-grid{
+    grid-template-columns: 1fr;
+  }
+}
