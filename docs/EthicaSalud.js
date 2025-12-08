@@ -630,10 +630,11 @@ function renderNews(items) {
     sourceLink.href = it.source_url || it.url;
     sourceLink.textContent = it.source_name || safeHost(it.url);
 
-    // ✅ aquí ponemos directamente el src de la imagen
-    img.alt = it.title || "Noticia";
-    img.src =
-      it.cover_image || "https://picsum.photos/seed/ethica/800/500";
+// dentro de renderNews, antes de img.alt...
+console.log("[Noticia] imagen:", it.cover_image);
+
+img.alt = it.title || "Noticia";
+img.src = it.cover_image || "https://picsum.photos/seed/ethica/800/500";
 
     frag.appendChild(node);
   }
