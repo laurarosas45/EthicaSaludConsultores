@@ -605,6 +605,12 @@ function applyAndRenderNews() {
 /**
  * Dibuja tarjetas de noticias.
  */
+// Busca esta sección en tu archivo EthicaSalud.js (alrededor de la línea 520-540)
+// y reemplázala con este código:
+
+/**
+ * Dibuja tarjetas de noticias con manejo robusto de imágenes.
+ */
 function renderNews(items) {
   const frag = document.createDocumentFragment();
 
@@ -619,7 +625,7 @@ function renderNews(items) {
     const date = node.querySelector(".date");
     const sourceLink = node.querySelector(".source-link");
 
-    // enlaces y textos
+    // Enlaces y textos
     link.href = it.url;
     title.href = it.url;
     title.textContent = it.title || "Sin título";
@@ -630,11 +636,53 @@ function renderNews(items) {
     sourceLink.href = it.source_url || it.url;
     sourceLink.textContent = it.source_name || safeHost(it.url);
 
-// dentro de renderNews, antes de img.alt...
-console.log("[Noticia] imagen:", it.cover_image);
-
-img.alt = it.title || "Noticia";
-img.src = it.cover_image || "https://picsum.photos/seed/ethica/800/500";
+    // ✅ CORRECCIÓN: Manejo robusto de imágenes
+    const imageUrl = it.cover_image || "";
+    
+    console.log(`[Noticia] "${it.title}" - Imagen original:`, imageUrl);
+    
+    // Configurar atributos de la imagen
+    img.alt = it.title || "Noticia de salud";
+    img.loading = "lazy"; // Carga lazy para mejor rendimiento
+    
+    // Si hay URL de imagen, intentar cargarla
+    if (imageUrl) {
+      img.src = imageUrl;
+      
+      // Agregar manejador de error para imagen de respaldo
+      img.onerror = function() {
+        console.warn(`[Noticia] Fallo al cargar imagen: ${imageUrl}`);
+        
+        // Usar imagen de respaldo basada en el tag
+        const fallbackImages = {
+          'normatividad': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=500&fit=crop',
+          'habilitacion': 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&h=500&fit=crop',
+          'auditorias': 'https://images.unsplash.com/photo-1554224311-beee460ef5cb?w=800&h=500&fit=crop',
+          'seguridad-paciente': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=500&fit=crop',
+          'guias-oficiales': 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=500&fit=crop'
+        };
+        
+        // Asignar imagen de respaldo según el tag, o una genérica
+        const fallback = fallbackImages[it.tag] || 
+                        'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=500&fit=crop';
+        
+        this.src = fallback;
+        
+        // Si también falla la imagen de respaldo, usar un placeholder sólido
+        this.onerror = function() {
+          console.error(`[Noticia] También falló imagen de respaldo para: ${it.title}`);
+          // Crear un SVG placeholder
+          const svg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500'%3E%3Crect fill='%23e2e8f0' width='800' height='500'/%3E%3Ctext x='50%25' y='50%25' font-family='system-ui' font-size='18' fill='%2364748b' text-anchor='middle' dy='.3em'%3E${encodeURIComponent(it.title || 'Imagen no disponible')}%3C/text%3E%3C/svg%3E`;
+          this.src = svg;
+          this.onerror = null; // Evitar bucle infinito
+        };
+      };
+    } else {
+      // Si no hay URL, usar placeholder directamente
+      console.warn(`[Noticia] Sin imagen para: ${it.title}`);
+      const svg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500'%3E%3Crect fill='%23e2e8f0' width='800' height='500'/%3E%3Ctext x='50%25' y='50%25' font-family='system-ui' font-size='18' fill='%2364748b' text-anchor='middle' dy='.3em'%3E${encodeURIComponent(it.title || 'Imagen no disponible')}%3C/text%3E%3C/svg%3E`;
+      img.src = svg;
+    }
 
     frag.appendChild(node);
   }
