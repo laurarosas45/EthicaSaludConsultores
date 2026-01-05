@@ -605,9 +605,6 @@ function applyAndRenderNews() {
 /**
  * Dibuja tarjetas de noticias.
  */
-// Busca esta sección en tu archivo EthicaSalud.js (alrededor de la línea 520-540)
-// y reemplázala con este código:
-
 /**
  * Dibuja tarjetas de noticias con manejo robusto de imágenes.
  */
@@ -636,53 +633,34 @@ function renderNews(items) {
     sourceLink.href = it.source_url || it.url;
     sourceLink.textContent = it.source_name || safeHost(it.url);
 
-    // ✅ CORRECCIÓN: Manejo robusto de imágenes
+    // ✅ Configuración de imagen con fallbacks
     const imageUrl = it.cover_image || "";
     
-    console.log(`[Noticia] "${it.title}" - Imagen original:`, imageUrl);
-    
-    // Configurar atributos de la imagen
+    // Atributos básicos
     img.alt = it.title || "Noticia de salud";
-    img.loading = "lazy"; // Carga lazy para mejor rendimiento
+    img.loading = "lazy";
     
-    // Si hay URL de imagen, intentar cargarla
-    if (imageUrl) {
-      img.src = imageUrl;
-      
-      // Agregar manejador de error para imagen de respaldo
-      img.onerror = function() {
-        console.warn(`[Noticia] Fallo al cargar imagen: ${imageUrl}`);
-        
-        // Usar imagen de respaldo basada en el tag
-        const fallbackImages = {
-          'normatividad': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=500&fit=crop',
-          'habilitacion': 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&h=500&fit=crop',
-          'auditorias': 'https://images.unsplash.com/photo-1554224311-beee460ef5cb?w=800&h=500&fit=crop',
-          'seguridad-paciente': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=500&fit=crop',
-          'guias-oficiales': 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=500&fit=crop'
-        };
-        
-        // Asignar imagen de respaldo según el tag, o una genérica
-        const fallback = fallbackImages[it.tag] || 
-                        'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=500&fit=crop';
-        
-        this.src = fallback;
-        
-        // Si también falla la imagen de respaldo, usar un placeholder sólido
-        this.onerror = function() {
-          console.error(`[Noticia] También falló imagen de respaldo para: ${it.title}`);
-          // Crear un SVG placeholder
-          const svg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500'%3E%3Crect fill='%23e2e8f0' width='800' height='500'/%3E%3Ctext x='50%25' y='50%25' font-family='system-ui' font-size='18' fill='%2364748b' text-anchor='middle' dy='.3em'%3E${encodeURIComponent(it.title || 'Imagen no disponible')}%3C/text%3E%3C/svg%3E`;
-          this.src = svg;
-          this.onerror = null; // Evitar bucle infinito
-        };
-      };
-    } else {
-      // Si no hay URL, usar placeholder directamente
-      console.warn(`[Noticia] Sin imagen para: ${it.title}`);
-      const svg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500'%3E%3Crect fill='%23e2e8f0' width='800' height='500'/%3E%3Ctext x='50%25' y='50%25' font-family='system-ui' font-size='18' fill='%2364748b' text-anchor='middle' dy='.3em'%3E${encodeURIComponent(it.title || 'Imagen no disponible')}%3C/text%3E%3C/svg%3E`;
-      img.src = svg;
-    }
+    // Imágenes de respaldo por categoría (Unsplash funcionales)
+    const fallbackImages = {
+      'normatividad': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=500&fit=crop&q=80',
+      'habilitacion': 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&h=500&fit=crop&q=80',
+      'auditorias': 'https://images.unsplash.com/photo-1554224311-beee460ef5cb?w=800&h=500&fit=crop&q=80',
+      'seguridad-paciente': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=500&fit=crop&q=80',
+      'guias-oficiales': 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=500&fit=crop&q=80'
+    };
+    
+    // Usar imagen principal o fallback
+    const finalImage = imageUrl || fallbackImages[it.tag] || 
+                       'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=500&fit=crop&q=80';
+    
+    img.src = finalImage;
+    
+    // Si falla la carga, usar placeholder SVG
+    img.onerror = function() {
+      console.warn('[Noticias] Error cargando imagen:', finalImage);
+      this.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500'%3E%3Crect fill='%2394a3b8' width='800' height='500'/%3E%3Ctext x='50%25' y='45%25' font-family='system-ui,-apple-system,sans-serif' font-size='20' font-weight='600' fill='%23ffffff' text-anchor='middle' dy='.3em'%3EÉthicaSalud%3C/text%3E%3Ctext x='50%25' y='55%25' font-family='system-ui,-apple-system,sans-serif' font-size='14' fill='%23e2e8f0' text-anchor='middle' dy='.3em'%3EConsultores%3C/text%3E%3C/svg%3E`;
+      this.onerror = null; // Evitar loop infinito
+    };
 
     frag.appendChild(node);
   }
