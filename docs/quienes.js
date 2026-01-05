@@ -19,12 +19,6 @@
     if (wrap){ wrap.scrollIntoView({behavior:'smooth', block:'start'}); }
   }
 
-  function parseHash(){
-    const h = location.hash || "#/quienes/conocenos";
-    const m = h.match(/^#\/quienes\/([^\/?#]+)/i);
-    const sub = (m && SUBS.includes(m[1].toLowerCase())) ? m[1].toLowerCase() : "conocenos";
-    showSubView(sub);
-  }
 
   window.addEventListener('hashchange', parseHash);
   window.addEventListener('DOMContentLoaded', parseHash);
